@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Mon profil" %} — PerteDocsTG{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <div class="card p-6 space-y-6">
+    <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+      <div>
+        <h1 class="text-2xl font-display font-bold text-gray-900 dark:text-white">{% trans "Mon profil" %}</h1>
+        <p class="text-gray-500 dark:text-gray-400">{% trans "Consultez et gérez les informations de votre compte." %}</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <a href="{% url 'accounts:settings' %}" class="btn-primary">{% trans "Paramètres" %}</a>
+        {% if user.is_citizen %}
+        <a href="{% url 'declarations:list' %}" class="btn-secondary">{% trans "Mes déclarations" %}</a>
+        {% elif user.is_staff_member %}
+        <a href="{% url 'declarations:list' %}" class="btn-secondary">{% trans "Toutes les déclarations" %}</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-3">
+      <a href="{% url 'accounts:settings' %}" class="group rounded-3xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <p class="text-sm font-medium text-gray-900 dark:text-white">{% trans "Paramètres" %}</p>
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{% trans "Modifier vos préférences, notification et informations de compte." %}</p>
+          </div>
+          <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-togo-green/10 text-togo-green">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 7a4 4 0 01-4-4 4 4 0 018 0 4 4 0 01-4 4zm6.5 3.5l-1.181-1.181A7.961 7.961 0 0019 13a8 8 0 10-8 8c1.829 0 3.53-.637 4.819-1.681L16.5 18.5z"/>
+            </svg>
+          </span>
+        </div>
+      </a>
+      <a href="{% url 'declarations:wizard' %}" class="group rounded-3xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <p class="text-sm font-medium text-gray-900 dark:text-white">{% trans "Nouvelle déclaration" %}</p>
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{% trans "Commencez une nouvelle déclaration de perte." %}</p>
+          </div>
+          <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-togo-yellow/10 text-togo-yellow">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+          </span>
+        </div>
+      </a>
+      <a href="{% url 'declarations:list' %}" class="group rounded-3xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <p class="text-sm font-medium text-gray-900 dark:text-white">{% trans "Mes déclarations" %}</p>
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{% trans "Consultez toutes vos déclarations passées." %}</p>
+          </div>
+          <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-togo-red/10 text-togo-red">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6m5 0H4"/>
+            </svg>
+          </span>
+        </div>
+      </a>
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-2">
+      <div class="rounded-3xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">{% trans "Informations" %}</h2>
+        <div class="mt-4 space-y-4 text-sm text-gray-600 dark:text-gray-300">
+          <div class="flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-togo-green/10 text-togo-green">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A4 4 0 016 18h12a4 4 0 011.121.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+              </span>
+              <span class="font-medium text-gray-900 dark:text-white">{% trans "Nom" %}</span>
+            </div>
+            <span class="text-right text-gray-700 dark:text-gray-300">{{ request.user.get_full_name|default:'—' }}</span>
+          </div>
+          <div class="flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-togo-yellow/10 text-togo-yellow">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12H8m0 0l3-3m-3 3l3 3"/>
+                </svg>
+              </span>
+              <span class="font-medium text-gray-900 dark:text-white">{% trans "E-mail" %}</span>
+            </div>
+            <span class="text-right text-gray-700 dark:text-gray-300">{{ request.user.email }}</span>
+          </div>
+          <div class="flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-togo-red/10 text-togo-red">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-9 8a4 4 0 100-8 4 4 0 000 8z"/>
+                </svg>
+              </span>
+              <span class="font-medium text-gray-900 dark:text-white">{% trans "Téléphone" %}</span>
+            </div>
+            <span class="text-right text-gray-700 dark:text-gray-300">{{ request.user.phone|default:'—' }}</span>
+          </div>
+          <div class="flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A2 2 0 013 15.382V5.618a2 2 0 011.105-1.789L9 1m6 19l5.447-2.724A2 2 0 0021 15.382V5.618a2 2 0 00-1.105-1.789L15 1M9 1v19m6-19v19"/>
+                </svg>
+              </span>
+              <span class="font-medium text-gray-900 dark:text-white">{% trans "Préfecture" %}</span>
+            </div>
+            <span class="text-right text-gray-700 dark:text-gray-300">{{ request.user.prefecture.name|default:'—' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">{% trans "Statistiques" %}</h2>
+        <div class="mt-4 space-y-4 text-sm text-gray-600 dark:text-gray-300">
+          <div class="flex items-center justify-between">
+            <span>{% trans "Déclarations soumises" %}</span>
+            <span class="font-semibold text-gray-900 dark:text-white">{{ declarations_count }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span>{% trans "Validées" %}</span>
+            <span class="font-semibold text-gray-900 dark:text-white">{{ validated_count }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

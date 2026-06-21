@@ -1,0 +1,225 @@
+{% extends 'base_staff.html' %}
+{% load i18n static humanize core_tags %}
+
+{% block title %}Tableau de bord — Administration{% endblock %}
+
+{% block content %}
+<div class="min-h-screen african-bg bg-gradient-to-br from-gray-950 via-emerald-950 to-gray-900">
+<div class="relative z-10 p-6 space-y-6" x-data="{ period: 'month' }">
+
+  <!-- En-tête -->
+  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <div class="flex h-1 w-10 overflow-hidden rounded-full">
+          <div class="flex-1 bg-togo-green"></div><div class="flex-1 bg-togo-yellow"></div><div class="flex-1 bg-togo-red"></div>
+        </div>
+        <span class="text-xs font-bold text-white/50 uppercase tracking-widest">Administration</span>
+      </div>
+      <h1 class="text-2xl font-display font-bold text-white">
+        {% if request.user.is_super_admin %}Tableau de bord Super Admin{% else %}Tableau de bord Admin{% endif %}
+      </h1>
+      <p class="text-white/40 text-sm mt-1">
+        {% if request.user.is_super_admin %}Vue d'ensemble complète et accès technique{% else %}Vue d'ensemble de la plateforme PerteDocsTG{% endif %}
+      </p>
+    </div>
+    <!-- Sélecteur période -->
+    <div class="flex items-center gap-1 bg-white/10 backdrop-blur-sm border border-white/15 rounded-xl p-1">
+      <button @click="period='day'; loadStats('day')" :class="period==='day' ? 'bg-togo-green text-white' : 'text-white/60 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all">Jour</button>
+      <button @click="period='week'; loadStats('week')" :class="period==='week' ? 'bg-togo-green text-white' : 'text-white/60 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all">Semaine</button>
+      <button @click="period='month'; loadStats('month')" :class="period==='month' ? 'bg-togo-green text-white' : 'text-white/60 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all">Mois</button>
+      <button @click="period='year'; loadStats('year')" :class="period==='year' ? 'bg-togo-green text-white' : 'text-white/60 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all">Année</button>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- Total -->
+    <div class="card-glass rounded-2xl p-5 border border-white/10">
+      <div class="flex items-center justify-between mb-3">
+        <div class="w-10 h-10 rounded-xl bg-blue-500/20 grid place-items-center">
+          <svg class="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <div class="text-right">
+          <p class="text-[10px] text-white/40 uppercase tracking-wide">Période</p>
+          <p id="kpi-period-label" class="text-xs text-white/40">ce mois</p>
+        </div>
+      </div>
+      <p id="kpi-total" class="text-3xl font-bold text-white">{{ kpis.month|intcomma }}</p>
+      <p class="text-xs text-white/40 mt-1">déclarations sur la période</p>
+    </div>
+
+    <!-- En attente -->
+    <div class="card-glass rounded-2xl p-5 border border-togo-yellow/30">
+      <div class="flex items-center justify-between mb-3">
+        <div class="w-10 h-10 rounded-xl bg-togo-yellow/20 grid place-items-center">
+          <svg class="w-5 h-5 text-togo-yellow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <span class="text-[10px] text-white/40 uppercase tracking-wide">En attente</span>
+      </div>
+      <p id="kpi-pending" class="text-3xl font-bold text-togo-yellow">{{ kpis.pending|intcomma }}</p>
+      <p id="kpi-pending-sub" class="text-xs text-white/40 mt-1">à traiter — <span id="kpi-today">{{ kpis.today }}</span> aujourd'hui</p>
+    </div>
+
+    <!-- Validées -->
+    <div class="card-glass rounded-2xl p-5 border border-togo-green/30">
+      <div class="flex items-center justify-between mb-3">
+        <div class="w-10 h-10 rounded-xl bg-togo-green/20 grid place-items-center">
+          <svg class="w-5 h-5 text-togo-green" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <span class="text-[10px] text-white/40 uppercase tracking-wide">Validées</span>
+      </div>
+      <p id="kpi-validated" class="text-3xl font-bold text-togo-green">{{ kpis.validated|intcomma }}</p>
+      <p class="text-xs text-white/40 mt-1">moy. <span id="kpi-avg-hours">{{ kpis.avg_processing_hours }}</span>h traitement</p>
+    </div>
+
+    <!-- Citoyens -->
+    <div class="card-glass rounded-2xl p-5 border border-purple-500/30">
+      <div class="flex items-center justify-between mb-3">
+        <div class="w-10 h-10 rounded-xl bg-purple-500/20 grid place-items-center">
+          <svg class="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </div>
+        <span class="text-[10px] text-white/40 uppercase tracking-wide">Citoyens</span>
+      </div>
+      <p class="text-3xl font-bold text-purple-400">{{ total_users|intcomma }}</p>
+      <p class="text-xs text-white/40 mt-1">+{{ new_users_today }} inscrits aujourd'hui</p>
+    </div>
+  </div>
+
+  <!-- Graphiques -->
+  <div class="grid lg:grid-cols-3 gap-6">
+    <!-- Graphique mensuel -->
+    <div class="lg:col-span-2 card p-6">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h3 class="font-display font-bold text-gray-900 dark:text-white">Évolution mensuelle</h3>
+          <p class="text-xs text-gray-400 mt-0.5">12 derniers mois</p>
+        </div>
+        <div class="flex items-center gap-4 text-xs text-gray-400">
+          <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-blue-500 rounded inline-block"></span>Soumises</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-togo-green rounded inline-block"></span>Validées</span>
+        </div>
+      </div>
+      <div class="h-56"><canvas id="monthly-chart" data-chart-data="{{ monthly_chart_data }}"></canvas></div>
+    </div>
+
+    <!-- Donut types -->
+    <div class="card p-6">
+      <h3 class="font-display font-bold text-gray-900 dark:text-white mb-1">Types de documents</h3>
+      <p class="text-xs text-gray-400 mb-4">Répartition globale</p>
+      <div class="h-44"><canvas id="doctype-chart" data-chart-data="{{ document_type_chart_data }}"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Tableau + Régions -->
+  <div class="grid lg:grid-cols-3 gap-6">
+    <!-- Top régions -->
+    <div class="card p-6">
+      <h3 class="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+        <svg class="w-4 h-4 text-togo-green" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+        Répartition régionale
+      </h3>
+      <div class="space-y-3">
+        {% for region in by_region %}
+        <div>
+          <div class="flex justify-between text-sm mb-1">
+            <span class="font-medium text-gray-700 dark:text-gray-300">{{ region.prefecture__region__name|default:"Non renseigné" }}</span>
+            <span class="font-bold text-gray-900 dark:text-white">{{ region.count }}</span>
+          </div>
+          <div class="h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+            {% if kpis.total > 0 %}
+            <div class="h-full bg-gradient-to-r from-togo-green to-emerald-400 rounded-full"
+                 style="width:{% widthratio region.count kpis.total 100 %}%"></div>
+            {% endif %}
+          </div>
+        </div>
+        {% empty %}
+        <p class="text-gray-400 text-sm text-center py-4">Aucune donnée</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Dernières déclarations -->
+    <div class="lg:col-span-2 card overflow-hidden">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800">
+        <h3 class="font-semibold text-gray-900 dark:text-white">Dernières déclarations</h3>
+        <a href="{% url 'declarations:list' %}" class="text-sm text-togo-green hover:underline font-semibold">Voir tout →</a>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr>
+              <th class="table-header">N° / Déclarant</th>
+              <th class="table-header">Document</th>
+              <th class="table-header">Statut</th>
+              <th class="table-header">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for decl in recent_declarations %}
+            <tr class="table-row">
+              <td class="table-cell">
+                <a href="{% url 'declarations:detail' decl.pk %}" class="font-mono text-xs font-bold text-togo-green hover:underline block">{{ decl.declaration_number }}</a>
+                <span class="text-xs text-gray-400">{{ decl.full_name }}</span>
+              </td>
+              <td class="table-cell text-sm text-gray-600 dark:text-gray-300">{{ decl.document_type.name|truncatechars:20 }}</td>
+              <td class="table-cell"><span class="badge badge-{{ decl.status }}">{{ decl.get_status_display }}</span></td>
+              <td class="table-cell text-xs text-gray-400">{{ decl.created_at|date:"d/m/Y" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="table-cell text-center text-gray-400 py-8">Aucune déclaration</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Exports -->
+  <div class="card p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div>
+      <h3 class="font-semibold text-gray-900 dark:text-white">Exporter les données</h3>
+      <p class="text-sm text-gray-400">Téléchargez les statistiques au format souhaité</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <a :href="`?export=csv&period=${period}`"   class="btn-outline btn-sm">📊 CSV</a>
+      <a :href="`?export=excel&period=${period}`" class="btn-outline btn-sm">📗 Excel</a>
+      <a :href="`?export=pdf&period=${period}`"   class="btn-primary btn-sm">📄 PDF</a>
+    </div>
+  </div>
+
+</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function fmt(n) {
+  return new Intl.NumberFormat('fr-FR').format(n);
+}
+
+async function loadStats(period) {
+  try {
+    const r = await fetch(`{% url 'dashboard:api_stats' %}?period=${period}`);
+    if (!r.ok) return;
+    const d = await r.json();
+    const totalEl = document.getElementById('kpi-total');
+    const pendingEl = document.getElementById('kpi-pending');
+    const validatedEl = document.getElementById('kpi-validated');
+    const todayEl = document.getElementById('kpi-today');
+    const avgEl = document.getElementById('kpi-avg-hours');
+    const labelEl = document.getElementById('kpi-period-label');
+    if (totalEl) totalEl.textContent = fmt(d.total);
+    if (pendingEl) pendingEl.textContent = fmt(d.pending);
+    if (validatedEl) validatedEl.textContent = fmt(d.validated);
+    if (todayEl) todayEl.textContent = fmt(d.today);
+    if (avgEl) avgEl.textContent = d.avg_processing_hours;
+    if (labelEl) labelEl.textContent = d.period_label || period;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => loadStats('month'));
+</script>
+{% endblock %}

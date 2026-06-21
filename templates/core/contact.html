@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{{ page|title }}{% endblock %}
+{% block navbar %}{% include 'partials/navbar.html' %}{% endblock %}
+{% block footer %}{% include 'partials/footer.html' %}{% endblock %}
+{% block content %}
+<div class="min-h-screen african-bg bg-gradient-to-br from-gray-950 via-emerald-950 to-gray-900 py-16">
+<div class="relative z-10 max-w-3xl mx-auto px-4">
+  <div class="card p-10 animate-slide-up">
+    <h1 class="text-3xl font-display font-bold text-gray-900 dark:text-white mb-6">
+      {% if 'contact' == 'about' %}À propos de PerteDocsTG
+      {% elif 'contact' == 'contact' %}Contactez-nous
+      {% elif 'contact' == 'faq' %}Questions fréquentes
+      {% else %}Mentions légales{% endif %}
+    </h1>
+    <div class="prose dark:prose-invert max-w-none text-gray-600 dark:text-gray-400">
+      {% if 'contact' == 'contact' %}
+      <div class="grid sm:grid-cols-2 gap-4 mb-8">
+        <div class="p-4 bg-togo-green/5 border border-togo-green/20 rounded-xl">
+          <p class="font-semibold text-togo-green mb-1">Email</p>
+          <p>support@pertedocs.tg</p>
+        </div>
+        <div class="p-4 bg-togo-green/5 border border-togo-green/20 rounded-xl">
+          <p class="font-semibold text-togo-green mb-1">Téléphone</p>
+          <p>+228 22 XX XX XX</p>
+        </div>
+        <div class="p-4 bg-togo-green/5 border border-togo-green/20 rounded-xl">
+          <p class="font-semibold text-togo-green mb-1">Adresse</p>
+          <p>Lomé, Togo</p>
+        </div>
+        <div class="p-4 bg-togo-green/5 border border-togo-green/20 rounded-xl">
+          <p class="font-semibold text-togo-green mb-1">Horaires</p>
+          <p>Lun–Ven 08h–17h</p>
+        </div>
+      </div>
+      {% endif %}
+      <p>Contenu de la page à compléter selon les informations officielles de la plateforme.</p>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}

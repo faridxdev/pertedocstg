@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block title %}Nouvelle déclaration — Étape 2{% endblock %}
+{% block navbar %}{% include 'partials/navbar.html' %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen african-bg bg-gradient-to-br from-gray-950 via-emerald-950 to-gray-900 py-10">
+<div class="relative z-10 max-w-2xl mx-auto px-4">
+
+  <div class="mb-8">
+    <div class="flex items-center justify-between relative">
+      <div class="absolute top-5 left-0 right-0 h-0.5 bg-white/10 z-0"></div>
+      <div class="absolute top-5 left-0 h-0.5 bg-togo-green z-0" style="width:40%"></div>
+      {% for s in steps %}
+      <div class="flex flex-col items-center gap-2 relative z-10">
+        <div class="wizard-step-circle {% if s.num < step %}wizard-step-complete{% elif s.num == step %}wizard-step-active{% else %}wizard-step-inactive{% endif %}">
+          {% if s.num < step %}<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          {% else %}{{ s.num }}{% endif %}
+        </div>
+        <span class="hidden sm:block text-[10px] font-semibold text-center {% if s.num == step %}text-togo-green{% elif s.num < step %}text-white/50{% else %}text-white/25{% endif %}">{{ s.label }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="card p-8 animate-slide-up">
+    <div class="flex items-center gap-3 mb-6 pb-6 border-b border-gray-100 dark:border-gray-800">
+      <div class="w-12 h-12 rounded-2xl bg-togo-red/10 flex items-center justify-center">
+        <svg class="w-6 h-6 text-togo-red" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      </div>
+      <div>
+        <h2 class="font-display font-bold text-lg text-gray-900 dark:text-white">Document perdu</h2>
+        <p class="text-sm text-gray-400">Informations sur le document que vous avez perdu</p>
+      </div>
+    </div>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <!-- Sélection visuelle du type de document -->
+      <div class="mb-6">
+        <label class="form-label">{{ form.document_type.label }} <span class="text-red-500">*</span></label>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" x-data="{ selected: '{{ form.document_type.value|default:'' }}' }">
+          {% for choice in form.document_type.field.queryset %}
+          <label class="cursor-pointer" @click="selected = '{{ choice.pk }}'">
+            <input type="radio" name="{{ form.document_type.html_name }}" value="{{ choice.pk }}" class="sr-only"
+                   {% if form.document_type.value == choice.pk|stringformat:"s" %}checked{% endif %}>
+            <div class="p-3 rounded-xl border-2 transition-all text-center flex flex-col items-center gap-2"
+                 :class="selected === '{{ choice.pk }}' ? 'border-togo-green bg-togo-green/5' : 'border-gray-200 dark:border-gray-700 hover:border-togo-green/40'">
+              <div class="w-9 h-9 rounded-lg flex items-center justify-center" :class="selected === '{{ choice.pk }}' ? 'bg-togo-green' : 'bg-gray-100 dark:bg-gray-700'">
+                <svg class="w-4.5 h-4.5" :class="selected === '{{ choice.pk }}' ? 'text-white' : 'text-gray-400'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              </div>
+              <span class="text-xs font-semibold leading-tight" :class="selected === '{{ choice.pk }}' ? 'text-togo-green' : 'text-gray-600 dark:text-gray-300'">{{ choice.name }}</span>
+            </div>
+          </label>
+          {% endfor %}
+        </div>
+        {% for e in form.document_type.errors %}<p class="form-error mt-2">{{ e }}</p>{% endfor %}
+      </div>
+
+      <div class="mb-5">
+        <label class="form-label">{{ form.document_number.label }}</label>
+        <input type="text" name="{{ form.document_number.html_name }}" value="{{ form.document_number.value|default:'' }}"
+               class="form-input" placeholder="Ex: TG-1234567890">
+        <p class="form-help">Si vous ne vous souvenez pas du numéro exact, laissez ce champ vide.</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="form-label">{{ form.document_issue_date.label }}</label>
+          <input type="date" name="{{ form.document_issue_date.html_name }}" value="{{ form.document_issue_date.value|date:'Y-m-d'|default:'' }}" class="form-input">
+        </div>
+        <div>
+          <label class="form-label">{{ form.document_issue_place.label }}</label>
+          <input type="text" name="{{ form.document_issue_place.html_name }}" value="{{ form.document_issue_place.value|default:'' }}" class="form-input" placeholder="Ex: Préfecture du Golfe, Lomé">
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <label class="form-label">{{ form.document_authority.label }}</label>
+        <input type="text" name="{{ form.document_authority.html_name }}" value="{{ form.document_authority.value|default:'' }}" class="form-input" placeholder="Ex: Ministère de la Sécurité">
+      </div>
+
+      <div class="flex justify-between pt-5 border-t border-gray-100 dark:border-gray-800">
+        <a href="{% url 'declarations:wizard' step=1 %}" class="btn-secondary flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>Précédent
+        </a>
+        <button type="submit" class="btn-primary flex items-center gap-2">
+          Continuer<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+</div>
+{% endblock %}

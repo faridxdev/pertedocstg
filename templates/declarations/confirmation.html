@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load i18n static core_tags %}
+
+{% block title %}Déclaration soumise — {{ declaration.declaration_number }}{% endblock %}
+{% block navbar %}{% include 'partials/navbar.html' %}{% endblock %}
+{% block footer %}{% include 'partials/footer.html' %}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen african-bg bg-gradient-to-br from-gray-950 via-emerald-950 to-gray-900 py-16">
+<div class="relative z-10 max-w-xl mx-auto px-4 text-center">
+
+  <!-- Icône succès animée -->
+  <div class="mb-8">
+    <div class="w-24 h-24 rounded-full bg-togo-green/15 flex items-center justify-center mx-auto animate-pulse-green">
+      <div class="w-16 h-16 rounded-full bg-togo-green flex items-center justify-center">
+        <svg class="w-9 h-9 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <h1 class="text-3xl font-display font-bold text-white mb-3">Déclaration soumise !</h1>
+  <p class="text-white/50 text-lg mb-10">Votre déclaration a été reçue et sera traitée sous 48–72h ouvrables.</p>
+
+  <!-- Carte numéro -->
+  <div class="card p-8 mb-6 text-left animate-slide-up">
+    <!-- Numéro mis en valeur -->
+    <div class="text-center mb-6 p-5 bg-togo-green/5 border border-togo-green/20 rounded-2xl">
+      <p class="text-xs text-gray-400 mb-2 font-medium uppercase tracking-wide">Votre numéro de déclaration</p>
+      <p class="text-2xl font-mono font-bold text-togo-green tracking-widest">{{ declaration.declaration_number }}</p>
+      <p class="text-xs text-gray-400 mt-2">📌 Conservez ce numéro précieusement</p>
+    </div>
+
+    <!-- Bande tricolore -->
+    <div class="flex h-1 rounded-full overflow-hidden mb-5">
+      <div class="flex-1 bg-togo-green"></div><div class="flex-1 bg-togo-yellow"></div><div class="flex-1 bg-togo-red"></div>
+    </div>
+
+    <!-- Détails -->
+    <div class="grid sm:grid-cols-2 gap-4 text-sm mb-6">
+      <div>
+        <p class="text-xs text-gray-400 mb-0.5">Document déclaré</p>
+        <p class="font-semibold text-gray-900 dark:text-white">{{ declaration.document_type.name }}</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-400 mb-0.5">Date de soumission</p>
+        <p class="font-semibold text-gray-900 dark:text-white">{{ declaration.submitted_at|date:"d/m/Y à H:i" }}</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-400 mb-0.5">Statut</p>
+        <span class="badge badge-submitted">{{ declaration.get_status_display }}</span>
+      </div>
+      <div>
+        <p class="text-xs text-gray-400 mb-0.5">Délai estimé</p>
+        <p class="font-semibold text-gray-900 dark:text-white">{{ declaration.document_type.processing_days }} jours ouvrables</p>
+      </div>
+    </div>
+
+    <!-- Étapes suivantes -->
+    <h3 class="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Prochaines étapes</h3>
+    <div class="space-y-3">
+      {% for etape in "Déclaration reçue et enregistrée,Examen par un agent administratif,Validation et émission du récépissé,Notification par email"|split:"," %}
+      <div class="flex items-center gap-3">
+        <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0
+          {% if forloop.counter == 1 %}bg-togo-green text-white{% else %}bg-gray-100 dark:bg-gray-700 text-gray-400{% endif %}">
+          {% if forloop.counter == 1 %}
+          <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          {% else %}<span class="text-xs font-bold">{{ forloop.counter }}</span>{% endif %}
+        </div>
+        <p class="text-sm text-gray-600 dark:text-gray-400">{{ etape }}</p>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Nouvelle fonctionnalité -->
+    <div class="mt-5 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl flex items-start gap-3">
+      <svg class="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+      <div>
+        <p class="text-sm font-semibold text-blue-700 dark:text-blue-300">Si votre document est retrouvé…</p>
+        <p class="text-xs text-blue-500 dark:text-blue-400 mt-0.5">
+          Vous recevrez une notification automatique avec le lieu de récupération.
+          Présentez-vous avec ce récépissé pour récupérer votre document original.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex flex-col sm:flex-row gap-4 justify-center">
+    <a href="{% url 'declarations:detail' declaration.pk %}" class="btn-primary flex items-center justify-center gap-2">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Voir ma déclaration
+    </a>
+    <a href="{% url 'dashboard:home' %}" class="btn-secondary flex items-center justify-center gap-2">
+      Tableau de bord
+    </a>
+  </div>
+
+</div>
+</div>
+{% endblock %}

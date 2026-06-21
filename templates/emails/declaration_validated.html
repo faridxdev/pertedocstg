@@ -1,0 +1,47 @@
+{% extends 'emails/base_email.html' %}
+{% load i18n %}
+
+{% block greeting %}Bonjour {{ user_name }},{% endblock %}
+
+{% block body_content %}
+<p class="message">
+  Excellente nouvelle ! Votre déclaration de perte de <strong>{{ declaration.document_type.name }}</strong>
+  a été <span class="status-validated">validée ✓</span> par nos services.
+</p>
+
+<div class="info-box">
+  <div class="info-row">
+    <span class="info-label">N° Déclaration</span>
+    <span class="info-value">{{ declaration.declaration_number }}</span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">Document</span>
+    <span class="info-value" style="font-family:sans-serif">{{ declaration.document_type.name }}</span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">Date de validation</span>
+    <span class="info-value" style="font-family:sans-serif">{{ declaration.processed_at|date:"d/m/Y à H:i" }}</span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">Statut</span>
+    <span class="info-value status-validated">Validé ✓</span>
+  </div>
+</div>
+
+<p class="message">
+  Votre <strong>récépissé officiel</strong> est maintenant disponible. 
+  Vous pouvez le télécharger dès maintenant depuis votre espace personnel.
+</p>
+
+<a href="{{ request.scheme }}://{{ request.get_host }}{% url 'declarations:download_receipt' declaration.pk %}" 
+   class="cta-btn" style="background:#059669;">
+  📄 Télécharger mon récépissé →
+</a>
+
+<hr class="divider">
+
+<p style="font-size:13px;color:#6b7280;text-align:center;">
+  Ce récépissé est valide <strong>90 jours</strong>. 
+  Il peut être vérifié sur <a href="{{ request.scheme }}://{{ request.get_host }}/verification/" style="color:#006B3F">pertedocs.tg/verification/</a>
+</p>
+{% endblock %}

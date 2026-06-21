@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block title %}Vérification d'authenticité{% endblock %}
+{% block navbar %}{% include 'partials/navbar.html' %}{% endblock %}
+{% block footer %}{% include 'partials/footer.html' %}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen african-bg bg-gradient-to-br from-gray-950 via-emerald-950 to-gray-900 py-20">
+<div class="relative z-10 max-w-2xl mx-auto px-4">
+
+  <!-- En-tête -->
+  <div class="text-center mb-10">
+    <div class="inline-flex items-center gap-2 bg-white/8 border border-white/15 rounded-full px-4 py-2 mb-6">
+      <div class="flex gap-1">
+        <div class="w-2.5 h-2.5 rounded-full bg-togo-green"></div>
+        <div class="w-2.5 h-2.5 rounded-full bg-togo-yellow"></div>
+        <div class="w-2.5 h-2.5 rounded-full bg-togo-red"></div>
+      </div>
+      <span class="text-sm text-white/80 font-semibold">Vérification Officielle — PerteDocsTG</span>
+    </div>
+    <h1 class="text-3xl font-display font-bold text-white mb-3">Vérification d'authenticité</h1>
+    <p class="text-white/50">Vérifiez l'authenticité d'un récépissé de déclaration de perte.</p>
+  </div>
+
+  {% if valid %}
+  <!-- ✅ Valide -->
+  <div class="card p-8 animate-slide-up">
+    <!-- Statut valide -->
+    <div class="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100 dark:border-gray-800">
+      <div class="w-14 h-14 rounded-2xl bg-togo-green flex items-center justify-center shadow-lg" style="box-shadow:0 4px 20px rgba(0,107,63,0.4)">
+        <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Document Authentique</h2>
+        <p class="text-togo-green font-semibold text-sm">✓ Récépissé officiel vérifié</p>
+      </div>
+      <span class="ml-auto badge badge-{{ declaration.status }}">{{ declaration.get_status_display }}</span>
+    </div>
+
+    <!-- Bande tricolore -->
+    <div class="flex h-1.5 rounded-full overflow-hidden mb-6">
+      <div class="flex-1 bg-togo-green"></div><div class="flex-1 bg-togo-yellow"></div><div class="flex-1 bg-togo-red"></div>
+    </div>
+
+    <!-- Infos -->
+    <div class="grid sm:grid-cols-2 gap-4 mb-6">
+      <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
+        <p class="text-xs text-gray-400 mb-1 font-medium uppercase tracking-wide">N° Déclaration</p>
+        <p class="font-mono font-bold text-togo-green text-lg">{{ declaration.declaration_number }}</p>
+      </div>
+      <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
+        <p class="text-xs text-gray-400 mb-1 font-medium uppercase tracking-wide">Type de document</p>
+        <p class="font-semibold text-gray-900 dark:text-white">{{ declaration.document_type.name }}</p>
+      </div>
+      <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
+        <p class="text-xs text-gray-400 mb-1 font-medium uppercase tracking-wide">Déclarant</p>
+        <p class="font-semibold text-gray-900 dark:text-white">{{ declaration.full_name }}</p>
+      </div>
+      <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
+        <p class="text-xs text-gray-400 mb-1 font-medium uppercase tracking-wide">Date de perte déclarée</p>
+        <p class="font-semibold text-gray-900 dark:text-white">{{ declaration.loss_date|date:"d/m/Y" }}</p>
+      </div>
+      {% if declaration.processed_at %}
+      <div class="sm:col-span-2 p-4 bg-togo-green/5 border border-togo-green/20 rounded-xl">
+        <p class="text-xs text-gray-400 mb-1 font-medium uppercase tracking-wide">Date de validation</p>
+        <p class="font-semibold text-togo-green">{{ declaration.processed_at|date:"d/m/Y à H:i" }}</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Alerte document retrouvé -->
+    {% if found_record %}
+    <div class="p-5 bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-300 dark:border-blue-700 rounded-xl mb-6">
+      <div class="flex items-start gap-3">
+        <div class="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+        </div>
+        <div>
+          <p class="font-bold text-blue-800 dark:text-blue-300">📍 Ce document a été retrouvé</p>
+          <p class="text-sm text-blue-600 dark:text-blue-400 mt-1">
+            Trouvé par : <strong>{{ found_record.found_by }}</strong><br>
+            Lieu : <strong>{{ found_record.found_location }}</strong>
+            {% if found_record.collection_deadline %}
+            <br>Date limite de récupération : <strong class="text-red-600">{{ found_record.collection_deadline|date:"d/m/Y" }}</strong>
+            {% endif %}
+          </p>
+          <p class="text-xs text-blue-500 dark:text-blue-400 mt-2">Statut : {{ found_record.get_status_display }}</p>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Note légale -->
+    <p class="text-xs text-gray-400 text-center leading-relaxed border-t border-gray-100 dark:border-gray-800 pt-5">
+      Ce récépissé a été émis par la plateforme officielle PerteDocsTG de la République Togolaise.
+      Son authenticité est garantie par notre système de vérification cryptographique.
+    </p>
+  </div>
+
+  {% else %}
+  <!-- ❌ Invalide -->
+  <div class="card p-8 animate-slide-up border-red-200 dark:border-red-800">
+    <div class="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100 dark:border-gray-800">
+      <div class="w-14 h-14 rounded-2xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+        <svg class="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Document Non Trouvé</h2>
+        <p class="text-red-500 font-semibold text-sm">✗ Impossible de vérifier ce récépissé</p>
+      </div>
+    </div>
+    <div class="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl mb-6">
+      <p class="text-sm text-red-700 dark:text-red-300">{{ error }}</p>
+    </div>
+    <ul class="space-y-2 text-sm text-gray-500 mb-6">
+      <li class="flex items-center gap-2"><span class="text-red-400">•</span>Le QR Code a été altéré ou copié incorrectement</li>
+      <li class="flex items-center gap-2"><span class="text-red-400">•</span>Ce récépissé n'est pas issu de la plateforme PerteDocsTG</li>
+      <li class="flex items-center gap-2"><span class="text-red-400">•</span>Le document a peut-être été archivé</li>
+    </ul>
+    <p class="text-sm text-gray-400 text-center">Contactez-nous : <a href="mailto:support@pertedocs.tg" class="text-togo-green hover:underline">support@pertedocs.tg</a></p>
+  </div>
+  {% endif %}
+
+  <!-- Formulaire de vérification manuelle -->
+  <div class="card p-6 mt-6">
+    <h3 class="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2 text-sm">
+      <svg class="w-4 h-4 text-togo-green" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      Vérifier un autre récépissé
+    </h3>
+    <form class="flex gap-3" onsubmit="event.preventDefault(); window.location='/verification/'+encodeURIComponent(document.getElementById('vt').value)+'/'">
+      <input id="vt" type="text" placeholder="Entrez le code de vérification…" class="form-input flex-1" value="{{ token|default:'' }}">
+      <button type="submit" class="btn-primary" style="white-space:nowrap">Vérifier</button>
+    </form>
+  </div>
+
+  <div class="text-center mt-6">
+    <a href="{% url 'core:home' %}" class="text-sm text-white/40 hover:text-white transition-colors">← Retour à l'accueil</a>
+  </div>
+</div>
+</div>
+{% endblock %}

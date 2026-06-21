@@ -1,0 +1,22 @@
+{% extends "account/base_entrance.html" %}
+{% load i18n %}
+
+{% block head_title %}
+    {% trans "Verify Your Email Address" %}
+{% endblock head_title %}
+
+{% block allauth_page %}
+    <div class="text-center space-y-4">
+        <div class="mx-auto w-14 h-14 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center mb-2">
+            <svg class="w-7 h-7 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-display font-bold text-white">
+            {% trans "Verify Your Email Address" %}
+        </h1>
+        <p class="text-white/50 text-sm leading-relaxed max-w-md mx-auto">
+            {% blocktrans %}We have sent an email to you for verification. Follow the link provided to finalize the signup process. If you do not see the verification email in your main inbox, check your spam folder. Please contact us if you do not receive the verification email within a few minutes.{% endblocktrans %}
+        </p>
+    </div>
+{% endblock allauth_page %}

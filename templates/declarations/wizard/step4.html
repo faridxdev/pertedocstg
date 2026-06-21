@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load i18n static core_tags %}
+
+{% block title %}Nouvelle déclaration — Étape 4{% endblock %}
+{% block navbar %}{% include 'partials/navbar.html' %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen african-bg bg-gradient-to-br from-gray-950 via-emerald-950 to-gray-900 py-10">
+<div class="relative z-10 max-w-2xl mx-auto px-4">
+
+  <div class="mb-8">
+    <div class="flex items-center justify-between relative">
+      <div class="absolute top-5 left-0 right-0 h-0.5 bg-white/10 z-0"></div>
+      <div class="absolute top-5 left-0 h-0.5 bg-togo-green z-0" style="width:80%"></div>
+      {% for s in steps %}
+      <div class="flex flex-col items-center gap-2 relative z-10">
+        <div class="wizard-step-circle {% if s.num < step %}wizard-step-complete{% elif s.num == step %}wizard-step-active{% else %}wizard-step-inactive{% endif %}">
+          {% if s.num < step %}<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          {% else %}{{ s.num }}{% endif %}
+        </div>
+        <span class="hidden sm:block text-[10px] font-semibold text-center {% if s.num == step %}text-togo-green{% elif s.num < step %}text-white/50{% else %}text-white/25{% endif %}">{{ s.label }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="card p-8 animate-slide-up">
+    <div class="flex items-center gap-3 mb-6 pb-6 border-b border-gray-100 dark:border-gray-800">
+      <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+        <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+      </div>
+      <div>
+        <h2 class="font-display font-bold text-lg text-gray-900 dark:text-white">Pièces jointes</h2>
+        <p class="text-sm text-gray-400">Joignez les documents justificatifs (max 20 Mo chacun)</p>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mb-6">
+      {% for fmt in "PDF,JPG,PNG"|split:"," %}
+      <span class="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs font-semibold text-gray-600 dark:text-gray-300">.{{ fmt }}</span>
+      {% endfor %}
+      <span class="inline-flex items-center gap-1 px-3 py-1 bg-amber-50 dark:bg-amber-900/20 rounded-full text-xs font-semibold text-amber-700 border border-amber-200">Max 20 Mo / fichier</span>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      <div class="space-y-5">
+
+        <div>
+          <label class="form-label">{{ form.attachment_1.label }} <span class="text-red-500">*</span></label>
+          <p class="text-xs text-gray-400 mb-2">{{ form.attachment_1.help_text }}</p>
+          <div class="file-upload-zone border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:border-togo-green transition-all">
+            <input type="file" name="{{ form.attachment_1.html_name }}" id="{{ form.attachment_1.id_for_label }}" accept=".pdf,.jpg,.jpeg,.png" class="sr-only" required>
+            <label for="{{ form.attachment_1.id_for_label }}" class="flex flex-col items-center gap-3 cursor-pointer">
+              <div class="w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                <svg class="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+              </div>
+              <p class="text-sm font-semibold text-gray-700 dark:text-gray-200">Cliquer pour choisir un fichier</p>
+              <p class="text-xs text-gray-400">PDF, JPG, PNG — max 20 Mo</p>
+            </label>
+            <div class="file-preview mt-3"></div>
+          </div>
+          {% for e in form.attachment_1.errors %}<p class="form-error mt-1">{{ e }}</p>{% endfor %}
+        </div>
+
+        {% with field=form.attachment_2 %}
+        <div>
+          <label class="form-label">{{ field.label }}</label>
+          <div class="file-upload-zone border-2 border-dashed border-gray-100 dark:border-gray-800 rounded-xl p-5 hover:border-togo-green/40 transition-all">
+            <input type="file" name="{{ field.html_name }}" id="{{ field.id_for_label }}" accept=".pdf,.jpg,.jpeg,.png" class="sr-only">
+            <label for="{{ field.id_for_label }}" class="flex items-center gap-3 cursor-pointer">
+              <div class="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              </div>
+              <span class="text-sm text-gray-500">Ajouter un document complémentaire (optionnel)</span>
+            </label>
+            <div class="file-preview mt-3"></div>
+          </div>
+          {% for e in field.errors %}<p class="form-error mt-1">{{ e }}</p>{% endfor %}
+        </div>
+        {% endwith %}
+
+        {% with field=form.attachment_3 %}
+        <div>
+          <label class="form-label">{{ field.label }}</label>
+          <div class="file-upload-zone border-2 border-dashed border-gray-100 dark:border-gray-800 rounded-xl p-5 hover:border-togo-green/40 transition-all">
+            <input type="file" name="{{ field.html_name }}" id="{{ field.id_for_label }}" accept=".pdf,.jpg,.jpeg,.png" class="sr-only">
+            <label for="{{ field.id_for_label }}" class="flex items-center gap-3 cursor-pointer">
+              <div class="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              </div>
+              <span class="text-sm text-gray-500">Ajouter un document complémentaire (optionnel)</span>
+            </label>
+            <div class="file-preview mt-3"></div>
+          </div>
+          {% for e in field.errors %}<p class="form-error mt-1">{{ e }}</p>{% endfor %}
+        </div>
+        {% endwith %}
+      </div>
+
+      <div class="flex justify-between mt-8 pt-5 border-t border-gray-100 dark:border-gray-800">
+        <a href="{% url 'declarations:wizard' step=3 %}" class="btn-secondary flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>Précédent
+        </a>
+        <button type="submit" class="btn-primary flex items-center gap-2">
+          Continuer<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+</div>
+{% endblock %}

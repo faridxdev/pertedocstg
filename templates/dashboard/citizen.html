@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load i18n static humanize %}
+
+{% block title %}Mon Tableau de Bord{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block content %}
+<!-- Fond avec motif africain -->
+<div class="min-h-screen african-bg bg-gradient-to-br from-gray-950 via-emerald-950 to-gray-900">
+
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- En-tête bienvenue -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fade-in">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <div class="togo-bar w-12 rounded-full overflow-hidden">
+            <div class="g"></div><div class="y"></div><div class="r"></div>
+          </div>
+          <span class="text-xs font-bold text-white/50 uppercase tracking-widest">République Togolaise</span>
+        </div>
+        <h1 class="text-3xl font-display font-bold text-white">
+          Bonjour, {{ request.user.first_name }} 👋
+        </h1>
+        <p class="text-white/50 mt-1 text-sm">Gérez vos déclarations de perte de documents officiels.</p>
+      </div>
+      <a href="{% url 'declarations:wizard' step=1 %}" class="btn-primary">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Nouvelle déclaration
+      </a>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-slide-up">
+      <div class="card-glass p-5 rounded-2xl border border-white/10">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
+            <svg class="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <span class="text-xs text-white/40 font-medium">Total</span>
+        </div>
+        <p class="text-3xl font-bold text-white">{{ stats.total }}</p>
+        <p class="text-xs text-white/40 mt-1">déclarations</p>
+      </div>
+
+      <div class="card-glass p-5 rounded-2xl border border-togo-green/30">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl bg-togo-green/20 flex items-center justify-center">
+            <svg class="w-5 h-5 text-togo-green" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <span class="text-xs text-white/40 font-medium">Validées</span>
+        </div>
+        <p class="text-3xl font-bold text-togo-green">{{ stats.validated }}</p>
+        <p class="text-xs text-white/40 mt-1">récépissés disponibles</p>
+      </div>
+
+      <div class="card-glass p-5 rounded-2xl border border-togo-yellow/30">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl bg-togo-yellow/20 flex items-center justify-center">
+            <svg class="w-5 h-5 text-togo-yellow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <span class="text-xs text-white/40 font-medium">En cours</span>
+        </div>
+        <p class="text-3xl font-bold text-togo-yellow">{{ stats.in_progress }}</p>
+        <p class="text-xs text-white/40 mt-1">en traitement</p>
+      </div>
+
+      <div class="card-glass p-5 rounded-2xl border border-togo-red/30">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl bg-togo-red/20 flex items-center justify-center">
+            <svg class="w-5 h-5 text-togo-red" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <span class="text-xs text-white/40 font-medium">Rejetées</span>
+        </div>
+        <p class="text-3xl font-bold text-togo-red">{{ stats.rejected }}</p>
+        <p class="text-xs text-white/40 mt-1">à corriger</p>
+      </div>
+    </div>
+
+    <!-- Déclarations récentes + Notifications -->
+    <div class="grid lg:grid-cols-3 gap-6">
+
+      <!-- Déclarations récentes -->
+      <div class="lg:col-span-2 card animate-slide-up overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800">
+          <h2 class="font-display font-bold text-gray-900 dark:text-white">Déclarations récentes</h2>
+          <a href="{% url 'declarations:list' %}" class="text-sm text-togo-green hover:underline font-semibold">Tout voir →</a>
+        </div>
+
+        {% if recent_declarations %}
+        <div class="divide-y divide-gray-50 dark:divide-gray-800">
+          {% for decl in recent_declarations %}
+          <div class="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+            <!-- Icône document -->
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0
+              {% if decl.status == 'validated' %}bg-togo-green/10
+              {% elif decl.status == 'rejected' %}bg-togo-red/10
+              {% elif decl.status in 'submitted,in_progress,under_review' %}bg-togo-yellow/10
+              {% else %}bg-gray-100 dark:bg-gray-700{% endif %}">
+              <svg class="w-5 h-5 {% if decl.status == 'validated' %}text-togo-green{% elif decl.status == 'rejected' %}text-togo-red{% elif decl.status in 'submitted,in_progress,under_review' %}text-yellow-600{% else %}text-gray-400{% endif %}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-0.5">
+                <span class="font-mono text-xs font-bold text-togo-green">{{ decl.declaration_number }}</span>
+                <!-- Badge document retrouvé -->
+                {% if decl.found_record_safe %}<span class="badge badge-found text-[10px]">📍 Retrouvé</span>{% endif %}
+              </div>
+              <p class="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate">{{ decl.document_type.name }}</p>
+              <p class="text-xs text-gray-400">{{ decl.created_at|date:"d/m/Y" }}</p>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <span class="badge badge-{{ decl.status }}">{{ decl.get_status_display }}</span>
+              <a href="{% url 'declarations:detail' decl.pk %}" class="text-gray-400 hover:text-togo-green transition-colors">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              </a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="py-16 text-center">
+          <div class="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <p class="text-gray-500 font-medium mb-4">Aucune déclaration pour l'instant</p>
+          <a href="{% url 'declarations:wizard' step=1 %}" class="btn-primary btn-sm">Faire ma première déclaration</a>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Notifications + Info document trouvé -->
+      <div class="space-y-4">
+        <!-- Alerte document retrouvé -->
+        {% for decl in recent_declarations %}
+          {% if decl.status == 'validated' %}
+          {# Utiliser try/except via la vue qui passe found_record #}
+          {% endif %}
+        {% endfor %}
+
+        <!-- Notifications -->
+        <div class="card animate-slide-up">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+            <h3 class="font-semibold text-gray-900 dark:text-white text-sm">Notifications</h3>
+            <a href="{% url 'notifications:list' %}" class="text-xs text-togo-green hover:underline">Tout voir</a>
+          </div>
+          <div class="divide-y divide-gray-50 dark:divide-gray-800">
+            {% for notif in notifications %}
+            <div class="px-5 py-3 flex items-start gap-3 {% if not notif.is_read %}bg-togo-green/3{% endif %}">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0
+                {% if 'validated' in notif.notification_type %}bg-togo-green/10 text-togo-green
+                {% elif 'rejected' in notif.notification_type %}bg-togo-red/10 text-togo-red
+                {% elif 'found' in notif.notification_type %}bg-blue-100 text-blue-600
+                {% else %}bg-gray-100 dark:bg-gray-700 text-gray-500{% endif %}">
+                {% if 'found' in notif.notification_type %}
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                {% else %}
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                {% endif %}
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-xs font-semibold text-gray-800 dark:text-gray-200 leading-tight">{{ notif.title|truncatechars:50 }}</p>
+                <p class="text-[11px] text-gray-400 mt-0.5">{{ notif.created_at|timesince }} ago</p>
+              </div>
+              {% if not notif.is_read %}<div class="w-2 h-2 rounded-full bg-togo-green flex-shrink-0 mt-1"></div>{% endif %}
+            </div>
+            {% empty %}
+            <div class="px-5 py-8 text-center">
+              <p class="text-sm text-gray-400">Aucune notification</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Info box -->
+        <div class="card p-5 border-l-4 border-togo-green animate-slide-up">
+          <h4 class="font-semibold text-togo-green text-sm mb-2 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Le saviez-vous ?
+          </h4>
+          <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+            Si vous retrouvez votre document ou si les autorités le retrouvent, 
+            vous serez notifié(e) automatiquement par email pour venir le récupérer.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

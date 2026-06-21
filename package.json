@@ -1,0 +1,14 @@
+{
+  "name": "pertedocstg",
+  "version": "1.0.0",
+  "description": "PerteDocsTG - Tailwind CSS build",
+  "scripts": {
+    "dev": "tailwindcss -i ./static/css/input.css -o ./static/css/main.css --watch",
+    "build": "tailwindcss -i ./static/css/input.css -o ./static/css/main.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0",
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.10"
+  }
+}

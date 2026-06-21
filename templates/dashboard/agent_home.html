@@ -1,0 +1,154 @@
+{% extends 'base_staff.html' %}
+{% load i18n static humanize %}
+
+{% block title %}Tableau de bord — Agent{% endblock %}
+
+{% block content %}
+<div class="min-h-screen african-bg bg-gradient-to-br from-gray-950 via-teal-950 to-gray-900">
+<div class="relative z-10 p-6 space-y-6">
+
+  <!-- En-tête agent -->
+  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <div class="flex h-1 w-10 overflow-hidden rounded-full">
+          <div class="flex-1 bg-togo-green"></div><div class="flex-1 bg-togo-yellow"></div><div class="flex-1 bg-togo-red"></div>
+        </div>
+        <span class="text-xs font-bold text-white/50 uppercase tracking-widest">Espace Agent</span>
+      </div>
+      <h1 class="text-2xl font-display font-bold text-white">Bonjour, {{ request.user.first_name }} 👋</h1>
+      <p class="text-white/40 text-sm mt-1">Traitez les déclarations en attente.</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <a href="{% url 'declarations:list' %}" class="btn-outline" style="border-color:rgba(255,255,255,0.3);color:white">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        Toutes les déclarations
+      </a>
+    </div>
+  </div>
+
+  <!-- Stats agents -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="card-glass rounded-2xl p-5 border border-togo-yellow/30">
+      <div class="w-10 h-10 rounded-xl bg-togo-yellow/20 grid place-items-center mb-3">
+        <svg class="w-5 h-5 text-togo-yellow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+      </div>
+      <p class="text-2xl font-bold text-togo-yellow">{{ stats.pending }}</p>
+      <p class="text-xs text-white/40 mt-1">En attente</p>
+    </div>
+
+    <div class="card-glass rounded-2xl p-5 border border-blue-500/30">
+      <div class="w-10 h-10 rounded-xl bg-blue-500/20 grid place-items-center mb-3">
+        <svg class="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+      </div>
+      <p class="text-2xl font-bold text-blue-400">{{ stats.in_progress }}</p>
+      <p class="text-xs text-white/40 mt-1">En traitement</p>
+    </div>
+
+    <div class="card-glass rounded-2xl p-5 border border-togo-green/30">
+      <div class="w-10 h-10 rounded-xl bg-togo-green/20 grid place-items-center mb-3">
+        <svg class="w-5 h-5 text-togo-green" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <p class="text-2xl font-bold text-togo-green">{{ stats.validated_today }}</p>
+      <p class="text-xs text-white/40 mt-1">Validées aujourd'hui</p>
+    </div>
+
+    <div class="card-glass rounded-2xl p-5 border border-togo-red/30">
+      <div class="w-10 h-10 rounded-xl bg-togo-red/20 grid place-items-center mb-3">
+        <svg class="w-5 h-5 text-togo-red" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <p class="text-2xl font-bold text-togo-red">{{ stats.rejected_today }}</p>
+      <p class="text-xs text-white/40 mt-1">Rejetées aujourd'hui</p>
+    </div>
+  </div>
+
+  <!-- File de traitement -->
+  <div class="card overflow-hidden">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800">
+      <h2 class="font-display font-bold text-gray-900 dark:text-white flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-togo-yellow animate-pulse inline-block"></span>
+        File de traitement
+        {% if stats.pending %}<span class="badge badge-submitted ml-2">{{ stats.pending }} en attente</span>{% endif %}
+      </h2>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr>
+            <th class="table-header">N° / Déclarant</th>
+            <th class="table-header">Document</th>
+            <th class="table-header">Statut</th>
+            <th class="table-header">Soumis le</th>
+            <th class="table-header">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for decl in pending_declarations %}
+          <tr class="table-row">
+            <td class="table-cell">
+              <a href="{% url 'declarations:detail' decl.pk %}" class="font-mono text-xs font-bold text-togo-green hover:underline block">{{ decl.declaration_number }}</a>
+              <span class="text-xs text-gray-500">{{ decl.full_name }}</span>
+            </td>
+            <td class="table-cell text-sm text-gray-700 dark:text-gray-300">{{ decl.document_type.name|truncatechars:22 }}</td>
+            <td class="table-cell"><span class="badge badge-{{ decl.status }}">{{ decl.get_status_display }}</span></td>
+            <td class="table-cell text-xs text-gray-400">{{ decl.submitted_at|date:"d/m/Y H:i"|default:"—" }}</td>
+            <td class="table-cell">
+              <div class="flex items-center gap-2">
+                <a href="{% url 'declarations:detail' decl.pk %}" class="btn-primary btn-sm">Ouvrir le dossier</a>
+                <a href="{% url 'declarations:mark_found' decl.pk %}" class="btn-outline btn-sm text-xs">📍 Retrouvé</a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="table-cell text-center py-12 text-gray-400">
+              <svg class="w-10 h-10 mx-auto mb-3 text-gray-200 dark:text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <p class="font-medium">Aucune déclaration en attente</p>
+              <p class="text-xs mt-1">Toutes les déclarations ont été traitées ✓</p>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Mes déclarations assignées -->
+  {% if my_declarations %}
+  <div class="card overflow-hidden">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800">
+      <h2 class="font-display font-bold text-gray-900 dark:text-white">Mes dossiers assignés</h2>
+      <span class="badge badge-submitted">{{ my_declarations|length }}</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr>
+            <th class="table-header">N° Déclaration</th>
+            <th class="table-header">Déclarant</th>
+            <th class="table-header">Document</th>
+            <th class="table-header">Statut</th>
+            <th class="table-header">Dernière MAJ</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for decl in my_declarations %}
+          <tr class="table-row">
+            <td class="table-cell">
+              <a href="{% url 'declarations:detail' decl.pk %}" class="font-mono text-xs font-bold text-togo-green hover:underline">{{ decl.declaration_number }}</a>
+            </td>
+            <td class="table-cell text-sm text-gray-700 dark:text-gray-300">{{ decl.full_name }}</td>
+            <td class="table-cell text-xs text-gray-500">{{ decl.document_type.name|truncatechars:18 }}</td>
+            <td class="table-cell"><span class="badge badge-{{ decl.status }}">{{ decl.get_status_display }}</span></td>
+            <td class="table-cell text-xs text-gray-400">{{ decl.updated_at|date:"d/m/Y H:i" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+</div>
+{% endblock %}

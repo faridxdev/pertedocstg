@@ -1,0 +1,67 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block subject %}PerteDocsTG{% endblock %}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #f4f4f5; color: #111827; }
+    .wrapper { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+    .header { background: linear-gradient(135deg, #006B3F, #004d2b); padding: 32px; text-align: center; }
+    .header-flag { display: flex; justify-content: center; gap: 0; margin-bottom: 16px; }
+    .flag-stripe { height: 6px; width: 60px; }
+    .logo-text { color: white; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+    .logo-sub { color: rgba(255,255,255,0.7); font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px; }
+    .body { padding: 40px 32px; }
+    .greeting { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #111827; }
+    .message { font-size: 15px; line-height: 1.7; color: #374151; margin-bottom: 24px; }
+    .info-box { background: #f0fdf4; border: 1px solid #86efac; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+    .info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #dcfce7; font-size: 14px; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { color: #6b7280; font-weight: 500; }
+    .info-value { color: #111827; font-weight: 700; font-family: monospace; }
+    .cta-btn { display: block; background: #006B3F; color: white; text-decoration: none; text-align: center; padding: 16px 32px; border-radius: 10px; font-weight: 700; font-size: 15px; margin: 24px 0; }
+    .cta-btn:hover { background: #005a34; }
+    .divider { border: none; border-top: 1px solid #e5e7eb; margin: 24px 0; }
+    .footer { background: #f9fafb; padding: 24px 32px; text-align: center; }
+    .footer p { font-size: 12px; color: #9ca3af; line-height: 1.6; }
+    .footer a { color: #006B3F; text-decoration: none; }
+    .status-validated { color: #059669; font-weight: 700; }
+    .status-rejected { color: #dc2626; font-weight: 700; }
+    .status-submitted { color: #2563eb; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <!-- En-tête -->
+    <div class="header">
+      <div class="header-flag">
+        <div class="flag-stripe" style="background:#006B3F"></div>
+        <div class="flag-stripe" style="background:#FFCE00;position:relative;display:flex;align-items:center;justify-content:center">
+          <div style="width:14px;height:14px;border-radius:50%;background:#D21034"></div>
+        </div>
+        <div class="flag-stripe" style="background:#006B3F"></div>
+      </div>
+      <div class="logo-text">PerteDocsTG</div>
+      <div class="logo-sub">Plateforme Nationale — République Togolaise</div>
+    </div>
+
+    <!-- Corps -->
+    <div class="body">
+      <p class="greeting">{% block greeting %}Bonjour,{% endblock %}</p>
+      {% block body_content %}{% endblock %}
+    </div>
+
+    <!-- Pied de page -->
+    <div class="footer">
+      <p>
+        Cet email a été envoyé automatiquement par <strong>PerteDocsTG</strong>.<br>
+        Pour toute question : <a href="mailto:support@pertedocs.tg">support@pertedocs.tg</a> | +228 22 XX XX XX<br><br>
+        © {% now "Y" %} République Togolaise — Ministère de la Sécurité et de la Protection Civile
+      </p>
+    </div>
+  </div>
+</body>
+</html>

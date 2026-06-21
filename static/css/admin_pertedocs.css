@@ -1,0 +1,408 @@
+/**
+ * PerteDocsTG — Thème Django Admin
+ * Couleurs : vert #006B3F, jaune #FFCE00, rouge #D21034
+ */
+
+/* ── Variables Thème Sombre Harmonisé (Toujours Sombre pour l'identité du site) ── */
+html[data-theme="light"],
+html[data-theme="dark"],
+:root {
+  --primary: #059669;
+  --secondary: #022c22;
+  --accent: #FFCE00;
+  --primary-fg: #ecfdf5;
+
+  --body-fg: #e5e7eb;
+  --body-bg: #030712;
+  --body-quiet-color: #9ca3af;
+  --body-medium-color: #d1d5db;
+  --body-loud-color: #f9fafb;
+
+  --header-color: #ecfdf5;
+  --header-branding-color: #fff;
+  --header-bg: #022c22;
+  --header-link-color: #ecfdf5;
+
+  --breadcrumbs-fg: #a7f3d0;
+  --breadcrumbs-link-fg: #ecfdf5;
+  --breadcrumbs-bg: #064e3b;
+
+  --link-fg: #4ade80;
+  --link-hover-color: #86efac;
+  --link-selected-fg: #34d399;
+
+  --hairline-color: #1f2937;
+  --border-color: #374151;
+
+  --error-fg: #fca5a5;
+
+  --message-success-bg: #064e3b;
+  --message-warning-bg: #78350f;
+  --message-error-bg: #7f1d1d;
+
+  --darkened-bg: #111827;
+  --selected-bg: #064e3b;
+  --selected-row: #022c22;
+
+  --button-fg: #fff;
+  --button-bg: #059669;
+  --button-hover-bg: #047857;
+  --default-button-bg: #006B3F;
+  --default-button-hover-bg: #059669;
+  --close-button-bg: #6b7280;
+  --close-button-hover-bg: #374151;
+
+  --body-bg-gradient: linear-gradient(135deg, #030712 0%, #022c22 45%, #030712 100%);
+  --container-bg: rgba(15, 23, 42, 0.85);
+  --container-border: rgba(255, 255, 255, 0.08);
+}
+
+/* ── Typographie & fond africain ───────────────────────────────────── */
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+  position: relative;
+  background: var(--body-bg-gradient) !important;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg stroke='%23FFCE00' stroke-width='0.6' opacity='0.12'%3E%3Ccircle cx='15' cy='15' r='9'/%3E%3Ccircle cx='45' cy='45' r='9'/%3E%3C/g%3E%3Cg stroke='%23D21034' stroke-width='0.4' opacity='0.08'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z'/%3E%3C/g%3E%3Crect x='0' y='0' width='30' height='30' fill='%23006B3F' opacity='0.04'/%3E%3Crect x='30' y='30' width='30' height='30' fill='%23006B3F' opacity='0.04'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#container {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Barre tricolore ───────────────────────────────────────────────── */
+.togo-bar {
+  display: flex;
+  height: 4px;
+  width: 100%;
+}
+
+.togo-bar .g {
+  flex: 1;
+  background: #006B3F;
+}
+
+.togo-bar .y {
+  flex: 1;
+  background: #FFCE00;
+}
+
+.togo-bar .r {
+  flex: 1;
+  background: #D21034;
+}
+
+/* ── En-tête personnalisé intégré ──────────────────────────────────── */
+.pertedocs-admin-branding {
+  display: flex;
+  flex-direction: column;
+}
+
+.pertedocs-admin-logo {
+  display: flex !important;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none !important;
+  color: var(--header-branding-color) !important;
+  padding: 0.25rem 0;
+}
+
+.pertedocs-admin-logo img {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+}
+
+.pertedocs-admin-logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.pertedocs-admin-logo-text strong {
+  font-family: 'Sora', 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--header-branding-color) !important;
+}
+
+.pertedocs-admin-logo-text small {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.75;
+  color: var(--header-color) !important;
+}
+
+/* ── Fil d'Ariane ──────────────────────────────────────────────────── */
+div.breadcrumbs {
+  background: var(--breadcrumbs-bg) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.65rem 1.25rem !important;
+  font-weight: 500;
+}
+
+/* ── Contenu principal ─────────────────────────────────────────────── */
+#content {
+  padding: 1.25rem 1.5rem 2rem !important;
+}
+
+#content-main {
+  border-radius: 1rem;
+}
+
+.module,
+#content-main,
+#content-main .module {
+  border-radius: 1rem !important;
+  border: 1px solid var(--container-border) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+  overflow: hidden;
+  background: var(--container-bg) !important;
+  backdrop-filter: blur(12px);
+}
+
+.module h2,
+.module caption,
+.inline-group h2 {
+  background: linear-gradient(135deg, #006B3F, #047857) !important;
+  color: #fff !important;
+  font-family: 'Sora', sans-serif !important;
+  font-weight: 700 !important;
+  padding: 0.75rem 1rem !important;
+}
+
+html[data-theme="dark"] .module h2,
+html[data-theme="dark"] .module caption,
+html[data-theme="dark"] .inline-group h2 {
+  background: linear-gradient(135deg, #064e3b, #022c22) !important;
+}
+
+/* ── Boutons ───────────────────────────────────────────────────────── */
+.button,
+input[type="submit"],
+input[type="button"],
+.submit-row input,
+a.button {
+  border-radius: 0.65rem !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-weight: 700 !important;
+  transition: all 0.15s !important;
+}
+
+.button.default,
+input[type="submit"].default,
+.submit-row input.default {
+  background: linear-gradient(135deg, #006B3F, #047857) !important;
+  box-shadow: 0 4px 14px rgba(0, 107, 63, 0.3) !important;
+}
+
+.button.default:hover,
+input[type="submit"].default:hover {
+  background: linear-gradient(135deg, #047857, #059669) !important;
+}
+
+.deletelink {
+  background: #D21034 !important;
+}
+
+/* ── Tableaux ──────────────────────────────────────────────────────── */
+#result_list thead th,
+#changelist table thead th {
+  background: var(--darkened-bg) !important;
+  font-size: 0.72rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  font-weight: 800 !important;
+}
+
+#result_list tbody tr:hover {
+  background: var(--selected-row) !important;
+}
+
+/* ── Formulaires ───────────────────────────────────────────────────── */
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  border-radius: 0.65rem !important;
+  border: 1.5px solid var(--border-color) !important;
+  padding: 0.5rem 0.75rem !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #006B3F !important;
+  box-shadow: 0 0 0 3px rgba(0, 107, 63, 0.15) !important;
+  outline: none !important;
+}
+
+/* ── Messages ──────────────────────────────────────────────────────── */
+.messagelist li {
+  border-radius: 0.75rem !important;
+  font-weight: 600;
+}
+
+/* ── Sidebar navigation ────────────────────────────────────────────── */
+#nav-sidebar {
+  border-right: 1px solid var(--border-color) !important;
+  background: var(--container-bg) !important;
+  backdrop-filter: blur(8px);
+}
+
+#nav-sidebar .current-model,
+#nav-sidebar .current-app .section {
+  color: var(--link-fg) !important;
+  font-weight: 700;
+}
+
+/* ── Page de connexion ─────────────────────────────────────────────── */
+body.login {
+  background: linear-gradient(135deg, #030712 0%, #022c22 50%, #030712 100%) !important;
+  min-height: 100vh;
+}
+
+body.login::before {
+  opacity: 1;
+}
+
+body.login #header {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+body.login #container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: transparent !important;
+}
+
+body.login #content {
+  padding: 1rem !important;
+  width: 100%;
+  max-width: 26rem;
+}
+
+body.login #content-main {
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 1.25rem !important;
+  padding: 2rem !important;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35) !important;
+}
+
+body.login .pertedocs-login-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #fff;
+}
+
+body.login .pertedocs-login-header img {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 0.75rem;
+  display: block;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+}
+
+body.login .pertedocs-login-header h1 {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  margin: 0 0 0.25rem;
+}
+
+body.login .pertedocs-login-header p {
+  font-size: 0.8rem;
+  opacity: 0.65;
+  margin: 0;
+}
+
+body.login label {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+}
+
+body.login input[type="text"],
+body.login input[type="password"] {
+  width: 100% !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+}
+
+body.login input[type="text"]:focus,
+body.login input[type="password"]:focus {
+  border-color: #4ade80 !important;
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2) !important;
+}
+
+body.login .submit-row {
+  padding: 1rem 0 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+body.login input[type="submit"] {
+  width: 100% !important;
+  padding: 0.85rem !important;
+  background: linear-gradient(135deg, #006B3F, #047857) !important;
+  border: none !important;
+  border-radius: 0.875rem !important;
+  font-size: 0.95rem !important;
+  cursor: pointer;
+}
+
+body.login .errornote {
+  border-radius: 0.75rem;
+  background: rgba(210, 16, 52, 0.15) !important;
+  border: 1px solid rgba(210, 16, 52, 0.4) !important;
+  color: #fca5a5 !important;
+}
+
+body.login .password-reset-link a {
+  color: #4ade80 !important;
+}
+
+body.login #footer {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* 🔧 Correction du fond blanc qui cache le motif */
+/* ── Suppression des fonds blancs pour laisser le motif visible ── */
+
+/* Rendre transparents les conteneurs internes qui cachent le motif */
+#content,
+#container,
+.dashboard,
+.change-list,
+#changelist,
+.app,
+.app-auth,
+.main,
+.colMS,
+.colSM,
+#changelist-filter {
+  background: transparent !important;
+}
+
+.module>*,
+#changelist-filter>* {
+  background: transparent !important;
+}

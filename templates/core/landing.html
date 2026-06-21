@@ -1,0 +1,309 @@
+{% extends 'base.html' %}
+{% load i18n static core_tags %}
+
+{% block title %}Accueil — Plateforme Nationale{% endblock %}
+{% block navbar %}{% include 'partials/navbar.html' %}{% endblock %}
+{% block footer %}{% include 'partials/footer.html' %}{% endblock %}
+
+{% block content %}
+
+<!-- ═══ HERO ═══════════════════════════════════════════════════════════════ -->
+<section class="relative min-h-screen flex items-center overflow-hidden african-bg bg-gradient-to-br from-gray-950 via-emerald-950 to-gray-900">
+
+  <!-- Cercles lumineux décoratifs -->
+  <div class="absolute top-20 right-20 w-96 h-96 rounded-full bg-togo-green/8 blur-3xl pointer-events-none"></div>
+  <div class="absolute bottom-20 left-10 w-64 h-64 rounded-full bg-togo-yellow/8 blur-3xl pointer-events-none"></div>
+  <div class="absolute top-1/3 left-1/2 w-72 h-72 rounded-full bg-togo-red/5 blur-3xl pointer-events-none"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 grid lg:grid-cols-2 gap-16 items-center w-full">
+
+    <!-- Texte principal -->
+    <div class="text-white space-y-8 animate-fade-in">
+      <!-- Badge officiel -->
+      <div class="inline-flex items-center gap-2.5 bg-white/8 backdrop-blur-sm border border-white/15 rounded-full px-5 py-2.5">
+        <div class="flex gap-1">
+          <div class="w-3 h-3 rounded-full bg-togo-green"></div>
+          <div class="w-3 h-3 rounded-full bg-togo-yellow"></div>
+          <div class="w-3 h-3 rounded-full bg-togo-red"></div>
+        </div>
+        <span class="text-sm font-semibold text-white/85">Service officiel — République Togolaise</span>
+      </div>
+
+      <div>
+        <h1 class="font-display text-5xl lg:text-6xl font-bold leading-tight">
+          <span class="text-white">Déclarez la perte</span><br>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-togo-green via-emerald-300 to-togo-yellow">
+            de vos documents
+          </span><br>
+          <span class="text-white">en ligne</span>
+        </h1>
+        <p class="mt-5 text-xl text-white/60 leading-relaxed max-w-lg">
+          Plateforme nationale 100% numérique pour déclarer la perte de vos pièces administratives.
+          Obtenez votre récépissé officiel en <strong class="text-white/85">moins de 72h</strong>.
+        </p>
+      </div>
+
+      <!-- Stats rapides -->
+      <div class="flex flex-wrap gap-8">
+        <div>
+          <div class="text-3xl font-bold text-togo-green">{{ stats.total_declarations|default:"0" }}+</div>
+          <div class="text-sm text-white/40">Déclarations traitées</div>
+        </div>
+        <div class="w-px bg-white/10"></div>
+        <div>
+          <div class="text-3xl font-bold text-togo-yellow">{{ stats.validated|default:"0" }}+</div>
+          <div class="text-sm text-white/40">Récépissés délivrés</div>
+        </div>
+        <div class="w-px bg-white/10"></div>
+        <div>
+          <div class="text-3xl font-bold text-white">{{ stats.avg_hours|default:"48" }}h</div>
+          <div class="text-sm text-white/40">Délai moyen</div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="flex flex-col sm:flex-row gap-4">
+        {% if user.is_authenticated %}
+        <a href="{% url 'declarations:wizard' step=1 %}" class="btn-primary btn-lg">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Nouvelle déclaration
+        </a>
+        <a href="{% url 'dashboard:home' %}" style="display:inline-flex;align-items:center;justify-content:center;gap:.5rem;background:rgba(255,255,255,.1);backdrop-filter:blur(8px);border:1.5px solid rgba(255,255,255,.2);color:#fff;font-weight:600;padding:1rem 2rem;border-radius:.875rem;text-decoration:none;transition:all .2s">
+          Mon tableau de bord →
+        </a>
+        {% else %}
+        <a href="{% url 'account_signup' %}" class="btn-primary btn-lg">
+          Commencer gratuitement
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </a>
+        <a href="{% url 'core:verification' token='demo' %}" style="display:inline-flex;align-items:center;justify-content:center;gap:.5rem;background:rgba(255,255,255,.08);backdrop-filter:blur(8px);border:1.5px solid rgba(255,255,255,.15);color:#fff;font-weight:600;padding:1rem 2rem;border-radius:.875rem;text-decoration:none;transition:all .2s">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Vérifier un récépissé
+        </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Mockup carte -->
+    <div class="hidden lg:block animate-slide-up">
+      <div class="card-glass rounded-3xl p-6 border border-white/15">
+        <!-- Header mockup -->
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <p class="text-white/40 text-xs font-medium uppercase tracking-wide">N° Déclaration</p>
+            <p class="font-mono font-bold text-togo-green text-lg">TG-2025-AB7C3K</p>
+          </div>
+          <span class="badge badge-validated text-sm px-4 py-1.5">✓ Validé</span>
+        </div>
+
+        <!-- Progress timeline -->
+        <div class="space-y-3 mb-5">
+          {% for item in "Déclaration soumise,En cours de traitement,Validée — Récépissé prêt"|split:"," %}
+          <div class="flex items-center gap-3">
+            <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0
+              {% if forloop.counter == 3 %}bg-togo-green{% elif forloop.counter == 2 %}bg-togo-yellow{% else %}bg-white/20{% endif %}">
+              {% if forloop.counter <= 3 %}
+              <svg class="w-3.5 h-3.5 {% if forloop.counter == 2 %}text-gray-900{% else %}text-white{% endif %}" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              {% endif %}
+            </div>
+            <span class="text-sm {% if forloop.counter == 3 %}text-white font-semibold{% else %}text-white/50{% endif %}">{{ item }}</span>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Bande tricolore + QR -->
+        <div class="flex h-1.5 rounded-full overflow-hidden mb-5">
+          <div class="flex-1 bg-togo-green"></div><div class="flex-1 bg-togo-yellow"></div><div class="flex-1 bg-togo-red"></div>
+        </div>
+
+        <div class="flex items-center justify-between bg-white/5 rounded-xl p-4">
+          <div>
+            <p class="text-white/40 text-xs mb-1">Récépissé disponible</p>
+            <p class="text-white font-semibold text-sm">Télécharger le PDF →</p>
+          </div>
+          <!-- QR décoratif -->
+          <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
+            <svg class="w-7 h-7 text-togo-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Nouvelle fonctionnalité badge -->
+        <div class="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center gap-3">
+          <svg class="w-5 h-5 text-blue-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <div>
+            <p class="text-xs font-bold text-blue-300">Nouveau — Document retrouvé</p>
+            <p class="text-[11px] text-blue-400/70">Notification automatique si votre document est récupéré par les autorités</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bande tricolore bas -->
+  <div class="absolute bottom-0 left-0 right-0 flex h-1.5">
+    <div class="flex-1 bg-togo-green"></div><div class="flex-1 bg-togo-yellow"></div>
+    <div class="flex-1 bg-togo-red"></div><div class="flex-1 bg-togo-yellow"></div>
+    <div class="flex-1 bg-togo-green"></div>
+  </div>
+</section>
+
+<!-- ═══ DOCUMENTS ACCEPTÉS ═══════════════════════════════════════════════════ -->
+<section class="py-20 bg-white dark:bg-gray-900">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-14">
+      <span class="inline-block text-sm font-bold text-togo-green uppercase tracking-widest mb-3">Documents acceptés</span>
+      <h2 class="text-3xl lg:text-4xl font-display font-bold text-gray-900 dark:text-white">Quels documents pouvez-vous déclarer ?</h2>
+      <p class="mt-4 text-lg text-gray-500 max-w-2xl mx-auto">Notre plateforme prend en charge tous les documents administratifs officiels du Togo.</p>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      {% for doc_type in document_types %}
+      <a href="{% url 'declarations:wizard' step=1 %}" class="group flex flex-col items-center p-5 rounded-2xl border-2 border-gray-100 dark:border-gray-700 hover:border-togo-green hover:shadow-lg transition-all bg-white dark:bg-gray-800 cursor-pointer">
+        <div class="w-14 h-14 rounded-xl bg-togo-green/8 dark:bg-togo-green/15 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+          <svg class="w-7 h-7 text-togo-green" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <span class="text-center text-xs font-semibold text-gray-700 dark:text-gray-200 group-hover:text-togo-green transition-colors leading-tight">{{ doc_type.name }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COMMENT ÇA MARCHE ═════════════════════════════════════════════════════ -->
+<section class="py-20 bg-gray-50 dark:bg-gray-950 relative overflow-hidden">
+  <!-- Motif léger -->
+  <div class="absolute inset-0 opacity-30 pointer-events-none" style="background-image:url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='20' r='10' fill='none' stroke='%23006B3F' stroke-width='0.3' opacity='0.4'/%3E%3C/svg%3E\"); background-size:40px 40px;"></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <span class="inline-block text-sm font-bold text-togo-green uppercase tracking-widest mb-3">Comment ça marche</span>
+      <h2 class="text-3xl lg:text-4xl font-display font-bold text-gray-900 dark:text-white">Simple, rapide et 100% sécurisé</h2>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {% for step_info in steps %}
+      <div class="relative group text-center">
+        {% if not forloop.last %}
+        <div class="hidden lg:block absolute top-10 left-full w-full h-px bg-gradient-to-r from-gray-200 to-transparent z-0 -translate-x-4"></div>
+        {% endif %}
+        <div class="relative z-10">
+          <div class="relative inline-flex mb-5">
+            <div class="w-20 h-20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm
+              {% if step_info.color == 'green' %}bg-togo-green/10 border-2 border-togo-green/20
+              {% elif step_info.color == 'yellow' %}bg-togo-yellow/10 border-2 border-togo-yellow/20
+              {% elif step_info.color == 'red' %}bg-togo-red/10 border-2 border-togo-red/20
+              {% else %}bg-blue-50 border-2 border-blue-100{% endif %}">
+              <svg class="w-9 h-9 {% if step_info.color == 'green' %}text-togo-green{% elif step_info.color == 'yellow' %}text-yellow-600{% elif step_info.color == 'red' %}text-togo-red{% else %}text-blue-500{% endif %}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                {% if forloop.counter == 1 %}<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                {% elif forloop.counter == 2 %}<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                {% elif forloop.counter == 3 %}<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                {% else %}<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>{% endif %}
+              </svg>
+            </div>
+            <span class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-togo-green text-white text-xs font-bold flex items-center justify-center">{{ step_info.num }}</span>
+          </div>
+          <h3 class="font-display font-bold text-lg text-gray-900 dark:text-white mb-2">{{ step_info.title }}</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{{ step_info.desc }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="text-center mt-14">
+      <a href="{% url 'account_signup' %}" class="btn-primary btn-lg inline-flex">
+        Déclarer une perte maintenant
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ NOUVELLE FONCTIONNALITÉ : DOCUMENT RETROUVÉ ══════════════════════════ -->
+<section class="py-20 bg-white dark:bg-gray-900">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+      <!-- Illustration -->
+      <div class="order-2 lg:order-1">
+        <div class="card p-8 border-2 border-blue-100 dark:border-blue-900">
+          <div class="flex items-center gap-4 mb-6">
+            <div class="w-14 h-14 rounded-2xl bg-blue-500/10 grid place-items-center">
+              <svg class="w-7 h-7 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-blue-500 uppercase tracking-wide">Nouveau</p>
+              <h3 class="font-display font-bold text-gray-900 dark:text-white">Votre document a été retrouvé</h3>
+            </div>
+          </div>
+          <div class="space-y-4 text-sm text-gray-600 dark:text-gray-400">
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-togo-green/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-3.5 h-3.5 text-togo-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              </div>
+              <p>Les autorités ou un citoyen retrouve votre document et le dépose dans un bureau officiel.</p>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-togo-green/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-3.5 h-3.5 text-togo-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              </div>
+              <p>Un agent PerteDocsTG enregistre la découverte et vous envoie une <strong class="text-gray-800 dark:text-gray-200">notification immédiate par email</strong>.</p>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-togo-green/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-3.5 h-3.5 text-togo-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              </div>
+              <p>Vous vous présentez avec votre <strong class="text-gray-800 dark:text-gray-200">récépissé PerteDocsTG</strong> pour récupérer votre document original.</p>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-3.5 h-3.5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+              </div>
+              <p>Délai de récupération <strong class="text-gray-800 dark:text-gray-200">30 jours</strong> avant archivage du document.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Texte -->
+      <div class="order-1 lg:order-2">
+        <span class="inline-block text-sm font-bold text-togo-green uppercase tracking-widest mb-3">Fonctionnalité unique</span>
+        <h2 class="text-3xl lg:text-4xl font-display font-bold text-gray-900 dark:text-white mb-5">
+          Et si votre document était retrouvé ?
+        </h2>
+        <p class="text-lg text-gray-500 dark:text-gray-400 leading-relaxed mb-6">
+          PerteDocsTG va plus loin que la simple déclaration. Grâce à notre réseau d'agents,
+          si votre document perdu est retrouvé, vous en serez informé(e) instantanément
+          et pourrez le récupérer en toute simplicité.
+        </p>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-center">
+            <div class="text-2xl font-bold text-togo-green mb-1">100%</div>
+            <p class="text-xs text-gray-400">Notifications automatiques</p>
+          </div>
+          <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-center">
+            <div class="text-2xl font-bold text-togo-yellow mb-1">30j</div>
+            <p class="text-xs text-gray-400">Délai de récupération</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA FINAL ═════════════════════════════════════════════════════════════ -->
+<section class="py-20 relative overflow-hidden african-bg bg-gradient-to-r from-togo-green via-emerald-700 to-togo-green">
+  <div class="relative z-10 max-w-4xl mx-auto px-4 text-center text-white">
+    <h2 class="text-3xl lg:text-4xl font-display font-bold mb-4">Prêt à déclarer une perte ?</h2>
+    <p class="text-white/70 text-lg mb-8 max-w-xl mx-auto">Créez votre compte en quelques secondes. Service gratuit, officiel et sécurisé.</p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="{% url 'account_signup' %}" style="display:inline-flex;align-items:center;justify-content:center;gap:.5rem;background:#fff;color:#006B3F;font-weight:800;padding:1.1rem 2.5rem;border-radius:.875rem;text-decoration:none;transition:all .2s;font-size:1.05rem;box-shadow:0 4px 20px rgba(0,0,0,0.15)">
+        Créer mon compte gratuit
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+      </a>
+      <a href="{% url 'core:faq' %}" style="display:inline-flex;align-items:center;justify-content:center;gap:.5rem;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-weight:600;padding:1.1rem 2.5rem;border-radius:.875rem;text-decoration:none;transition:all .2s">
+        En savoir plus
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

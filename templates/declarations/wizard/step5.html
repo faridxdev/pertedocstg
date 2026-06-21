@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block title %}Déclaration — Étape 5 : Confirmation{% endblock %}
+
+{% block content %}
+<div class="min-h-screen african-bg bg-gradient-to-br from-gray-950 via-emerald-950 to-gray-900 py-10">
+<div class="relative z-10 max-w-2xl mx-auto px-4">
+
+  <!-- Barre de progression -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between relative">
+      <div class="absolute top-5 left-0 right-0 h-0.5 bg-white/10 z-0"></div>
+      <div class="absolute top-5 left-0 h-0.5 bg-togo-green z-0" style="width:100%"></div>
+      {% for s in steps %}
+      <div class="flex flex-col items-center gap-2 relative z-10">
+        <div class="wizard-step-circle {% if s.num < step %}wizard-step-complete{% elif s.num == step %}wizard-step-active{% else %}wizard-step-inactive{% endif %}">
+          {% if s.num < step %}<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          {% else %}{{ s.num }}{% endif %}
+        </div>
+        <span class="hidden sm:block text-[10px] font-semibold text-center {% if s.num == step %}text-togo-green{% elif s.num < step %}text-white/60{% else %}text-white/30{% endif %}">{{ s.label }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Carte principale -->
+  <div class="card p-8 animate-slide-up">
+    <!-- En-tête étape -->
+    <div class="flex items-center gap-3 mb-6 pb-6 border-b border-gray-100 dark:border-gray-800">
+      <div class="w-12 h-12 rounded-2xl bg-togo-green/10 flex items-center justify-center">
+        <svg class="w-6 h-6 text-togo-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="font-display font-bold text-xl text-gray-900 dark:text-white">Confirmation et signature</h2>
+        <p class="text-sm text-gray-400">Dernière étape avant soumission</p>
+      </div>
+    </div>
+
+    <!-- Récapitulatif -->
+    {% if declaration %}
+    <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+      <p class="text-xs font-bold text-gray-400 uppercase tracking-wide mb-3">Récapitulatif</p>
+      <div class="grid sm:grid-cols-2 gap-3 text-sm">
+        <div><span class="text-gray-400">Déclarant :</span> <span class="font-semibold text-gray-900 dark:text-white ml-1">{{ declaration.full_name }}</span></div>
+        <div><span class="text-gray-400">Document :</span> <span class="font-semibold text-gray-900 dark:text-white ml-1">{{ declaration.document_type.name }}</span></div>
+        <div><span class="text-gray-400">Numéro :</span> <span class="font-mono font-semibold text-gray-900 dark:text-white ml-1">{{ declaration.document_number|default:"Non renseigné" }}</span></div>
+        <div><span class="text-gray-400">Date de perte :</span> <span class="font-semibold text-gray-900 dark:text-white ml-1">{{ declaration.loss_date|date:"d/m/Y" }}</span></div>
+        <div class="sm:col-span-2"><span class="text-gray-400">Lieu :</span> <span class="font-semibold text-gray-900 dark:text-white ml-1">{{ declaration.loss_place }}</span></div>
+      </div>
+    </div>
+    {% endif %}
+
+    <form method="post" novalidate id="step5-form">
+      {% csrf_token %}
+      {% if declaration %}
+      <input type="hidden" name="declaration_id" value="{{ declaration.id }}">
+      {% endif %}
+
+      <!-- Signature électronique -->
+      <div class="mb-6">
+        <p class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Signature électronique</p>
+        <p class="text-xs text-gray-400 mb-3">Signez dans le cadre ci-dessous (souris ou doigt sur mobile).</p>
+        <div class="border-2 border-dashed border-gray-200 dark:border-gray-600 rounded-xl overflow-hidden bg-white dark:bg-gray-800 relative">
+          <canvas id="signature-canvas" class="w-full cursor-crosshair" width="560" height="160" style="display:block;touch-action:none"></canvas>
+          <div class="absolute bottom-2 right-2">
+            <button type="button" onclick="signaturePad?.clear()" class="text-xs text-gray-300 hover:text-red-400 transition-colors flex items-center gap-1">
+              <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              Effacer
+            </button>
+          </div>
+        </div>
+        <input type="hidden" name="signature_data" id="signature-data">
+        <p id="sig-error" class="text-xs text-red-500 mt-1 hidden">Veuillez apposer votre signature.</p>
+      </div>
+
+      <!-- Déclaration sur l'honneur -->
+      <div class="space-y-4 mb-6">
+        <div class="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-xl">
+          <label class="flex items-start gap-3 cursor-pointer">
+            <input type="checkbox" name="honor_declaration" id="id_honor_declaration" required
+                   class="mt-1 w-5 h-5 rounded border-amber-400 text-togo-green focus:ring-togo-green cursor-pointer">
+            <div>
+              <p class="text-sm font-bold text-amber-800 dark:text-amber-300 mb-1">Déclaration sur l'honneur <span class="text-red-500">*</span></p>
+              <p class="text-sm text-amber-700 dark:text-amber-400 leading-relaxed">
+                Je soussigné(e) déclare sur l'honneur que les informations fournies sont exactes et sincères.
+                Je reconnais être passible de poursuites judiciaires en cas de fausse déclaration,
+                conformément à la législation togolaise en vigueur.
+              </p>
+            </div>
+          </label>
+          <p id="honor-error" class="text-xs text-red-500 mt-2 hidden">Vous devez accepter la déclaration sur l'honneur.</p>
+        </div>
+
+        <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-xl">
+          <label class="flex items-start gap-3 cursor-pointer">
+            <input type="checkbox" name="terms_accepted" id="id_terms" required
+                   class="mt-1 w-5 h-5 rounded border-gray-300 text-togo-green focus:ring-togo-green cursor-pointer">
+            <p class="text-sm text-gray-600 dark:text-gray-300">
+              J'accepte les <a href="/mentions-legales/" target="_blank" class="text-togo-green hover:underline font-semibold">conditions d'utilisation</a>
+              de la plateforme PerteDocsTG. <span class="text-red-500">*</span>
+            </p>
+          </label>
+          <p id="terms-error" class="text-xs text-red-500 mt-1 hidden">Vous devez accepter les conditions.</p>
+        </div>
+      </div>
+
+      <!-- Info notification -->
+      <div class="p-4 bg-togo-green/5 border border-togo-green/20 rounded-xl flex items-start gap-3 mb-6">
+        <svg class="w-5 h-5 text-togo-green flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        <div>
+          <p class="text-sm font-semibold text-togo-green">Après soumission</p>
+          <p class="text-xs text-gray-500 mt-0.5">
+            Traitement sous <strong>48–72h ouvrables</strong>. Vous serez notifié(e) à chaque étape.
+            Si votre document est retrouvé, vous recevrez une alerte immédiate par email.
+          </p>
+        </div>
+      </div>
+
+      <!-- Boutons -->
+      <div class="flex justify-between pt-4 border-t border-gray-100 dark:border-gray-800">
+        <a href="{% url 'declarations:wizard' step=4 %}" class="btn-secondary flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          Précédent
+        </a>
+        <button type="button" onclick="validateAndSubmit()" class="btn-primary btn-lg flex items-center gap-2" id="submit-btn">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+          Soumettre ma déclaration
+        </button>
+      </div>
+    </form>
+  </div>
+
+</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ── Signature Pad ─────────────────────────────────────────────────────────────
+class SignaturePad {
+  constructor(canvasId, inputId) {
+    this.canvas = document.getElementById(canvasId);
+    this.input  = document.getElementById(inputId);
+    if (!this.canvas) return;
+    this.ctx     = this.canvas.getContext('2d');
+    this.drawing = false;
+    this.hasData = false;
+    this._initCanvas();
+    this._bindEvents();
+  }
+  _initCanvas() {
+    const rect = this.canvas.getBoundingClientRect();
+    this.ctx.lineWidth   = 2;
+    this.ctx.lineCap     = 'round';
+    this.ctx.lineJoin    = 'round';
+    this.ctx.strokeStyle = '#006B3F';
+  }
+  _bindEvents() {
+    this.canvas.addEventListener('mousedown', e => { this.drawing = true; this.ctx.beginPath(); this.ctx.moveTo(...this._pos(e)); });
+    this.canvas.addEventListener('mousemove', e => { if (this.drawing) { this.ctx.lineTo(...this._pos(e)); this.ctx.stroke(); this.hasData = true; } });
+    this.canvas.addEventListener('mouseup',   () => { this.drawing = false; this._save(); });
+    this.canvas.addEventListener('mouseleave',() => { this.drawing = false; });
+    this.canvas.addEventListener('touchstart', e => { e.preventDefault(); this.drawing = true; this.ctx.beginPath(); this.ctx.moveTo(...this._touch(e)); }, {passive:false});
+    this.canvas.addEventListener('touchmove',  e => { e.preventDefault(); if(this.drawing){ this.ctx.lineTo(...this._touch(e)); this.ctx.stroke(); this.hasData = true; } }, {passive:false});
+    this.canvas.addEventListener('touchend',   () => { this.drawing = false; this._save(); });
+  }
+  _pos(e)   { const r = this.canvas.getBoundingClientRect(); return [e.clientX-r.left, e.clientY-r.top]; }
+  _touch(e) { const r = this.canvas.getBoundingClientRect(); return [e.touches[0].clientX-r.left, e.touches[0].clientY-r.top]; }
+  _save()   { if (this.input) this.input.value = this.canvas.toDataURL('image/png'); }
+  clear()   { this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); this.hasData = false; if (this.input) this.input.value = ''; }
+}
+window.signaturePad = new SignaturePad('signature-canvas', 'signature-data');
+
+// ── Validation avant soumission ───────────────────────────────────────────────
+function validateAndSubmit() {
+  let valid = true;
+
+  // Signature
+  const hasSig = signaturePad?.hasData;
+  document.getElementById('sig-error').classList.toggle('hidden', hasSig);
+  if (!hasSig) valid = false;
+
+  // Honor
+  const honor = document.getElementById('id_honor_declaration');
+  document.getElementById('honor-error').classList.toggle('hidden', honor.checked);
+  if (!honor.checked) valid = false;
+
+  // Terms
+  const terms = document.getElementById('id_terms');
+  document.getElementById('terms-error').classList.toggle('hidden', terms.checked);
+  if (!terms.checked) valid = false;
+
+  if (!valid) return;
+
+  if (!confirm('Êtes-vous sûr(e) de vouloir soumettre cette déclaration ? Cette action est définitive.')) return;
+
+  // Désactiver le bouton pour éviter double-soumission
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Envoi en cours…';
+
+  document.getElementById('step5-form').submit();
+}
+</script>
+{% endblock %}

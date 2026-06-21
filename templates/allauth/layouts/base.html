@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block title %}
+    {% block head_title %}{% endblock head_title %}
+{% endblock title %}
+
+{% block main_class %}w-full{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen relative flex flex-col african-bg bg-gradient-to-br from-gray-950 via-emerald-950 to-gray-900 overflow-hidden">
+
+  <!-- Cercles lumineux décoratifs -->
+  <div class="absolute top-0 right-0 w-[32rem] h-[32rem] rounded-full bg-togo-green/10 blur-3xl pointer-events-none"></div>
+  <div class="absolute bottom-0 left-0 w-96 h-96 rounded-full bg-togo-yellow/8 blur-3xl pointer-events-none"></div>
+  <div class="absolute top-1/3 left-1/4 w-64 h-64 rounded-full bg-togo-red/6 blur-3xl pointer-events-none"></div>
+
+  <!-- Barre tricolore -->
+  <div class="relative z-20 flex h-1 flex-shrink-0">
+    <div class="flex-1 bg-togo-green"></div>
+    <div class="flex-1 bg-togo-yellow"></div>
+    <div class="flex-1 bg-togo-red"></div>
+    <div class="flex-1 bg-togo-yellow"></div>
+    <div class="flex-1 bg-togo-green"></div>
+  </div>
+
+  <!-- En-tête -->
+  <header class="relative z-10 px-6 sm:px-10 lg:px-16 pt-8 pb-4">
+    <a href="{% url 'core:home' %}" class="inline-flex items-center gap-3 group">
+      <img src="{% static 'img/logo.svg' %}" alt="Logo PerteDocsTG" class="h-10 sm:h-12 w-auto flex-shrink-0">
+      <div>
+        <span class="font-display font-bold text-lg sm:text-xl text-white tracking-tight group-hover:text-emerald-200 transition-colors">PerteDocsTG</span>
+        <span class="block text-[10px] text-white/40 font-semibold tracking-widest uppercase">Plateforme Nationale</span>
+      </div>
+    </a>
+  </header>
+
+  <!-- Contenu principal -->
+  <div class="relative z-10 flex-1 flex items-center justify-center px-6 sm:px-10 lg:px-16 py-8 lg:py-12">
+    <div class="w-full max-w-6xl animate-fade-in">
+      <div class="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+
+        <!-- Branding -->
+        <div class="lg:col-span-5 space-y-8 text-center lg:text-left">
+          <div class="space-y-4">
+            <p class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-semibold text-emerald-300/90 uppercase tracking-widest">
+              <span class="w-1.5 h-1.5 rounded-full bg-togo-green animate-pulse"></span>
+              République Togolaise
+            </p>
+            <h2 class="font-display text-3xl sm:text-4xl xl:text-5xl font-bold text-white leading-tight">
+              Protégez vos<br>
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-togo-green to-togo-yellow">documents officiels</span>
+            </h2>
+            <p class="text-white/50 text-sm sm:text-base leading-relaxed max-w-md mx-auto lg:mx-0">
+              Déclarez la perte de vos pièces administratives en ligne et obtenez votre récépissé officiel en toute sécurité.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 sm:gap-4 max-w-sm mx-auto lg:mx-0">
+            <div class="rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm px-3 py-4 text-center">
+              <div class="text-lg sm:text-xl font-bold text-togo-green">100%</div>
+              <div class="text-[10px] sm:text-[11px] text-white/35 font-medium mt-0.5">Numérique</div>
+            </div>
+            <div class="rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm px-3 py-4 text-center">
+              <div class="text-lg sm:text-xl font-bold text-togo-yellow">72h</div>
+              <div class="text-[10px] sm:text-[11px] text-white/35 font-medium mt-0.5">Délai moyen</div>
+            </div>
+            <div class="rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm px-3 py-4 text-center">
+              <div class="text-lg sm:text-xl font-bold text-white">Gratuit</div>
+              <div class="text-[10px] sm:text-[11px] text-white/35 font-medium mt-0.5">Officiel</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulaire (carte verre) -->
+        <div class="lg:col-span-7">
+          <div class="rounded-3xl bg-white/8 backdrop-blur-xl border border-white/15 shadow-2xl shadow-black/30 p-7 sm:p-9 lg:p-10">
+            {% block allauth_page %}{% endblock allauth_page %}
+          </div>
+
+          <div class="text-center mt-6">
+            <a href="{% url 'core:home' %}" class="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-emerald-300 transition-colors">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+              Retour à l'accueil
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Pied de page -->
+  <footer class="relative z-10 px-6 sm:px-10 lg:px-16 pb-8">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-white/30">
+      <div class="flex items-center gap-2">
+        <div class="flex gap-1">
+          <div class="w-2 h-2 rounded-full bg-togo-green"></div>
+          <div class="w-2 h-2 rounded-full bg-togo-yellow"></div>
+          <div class="w-2 h-2 rounded-full bg-togo-red"></div>
+        </div>
+        <span>Service officiel — République Togolaise</span>
+      </div>
+      <p>© {% now "Y" %} <span class="font-medium text-white/45">PerteDocsTG</span></p>
+    </div>
+  </footer>
+
+</div>
+{% endblock content %}
+
+{% block footer %}{% endblock %}

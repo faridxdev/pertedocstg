@@ -1,0 +1,32 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('PerteDocsTG') }}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/admin_pertedocs.css' %}">
+{% endblock %}
+
+{% block branding %}
+<div class="pertedocs-admin-branding">
+  <div class="togo-bar" aria-hidden="true"><span class="g"></span><span class="y"></span><span class="r"></span></div>
+  <a href="{% url 'admin:index' %}" class="pertedocs-admin-logo">
+    <img src="{% static 'img/logo.svg' %}" alt="" width="36" height="36">
+    <span class="pertedocs-admin-logo-text">
+      <strong>PerteDocsTG</strong>
+      <small>{{ site_header|default:'Administration' }}</small>
+    </span>
+  </a>
+</div>
+{% endblock %}
+
+{# ── Surcharge de userlinks pour ajouter nos liens personnalisés ── #}
+{% block userlinks %}
+  <a href="{% url 'dashboard:home' %}">Tableau de bord</a> /
+  <a href="{% url 'core:home' %}">Site public</a> /
+  {{ block.super }}
+{% endblock %}

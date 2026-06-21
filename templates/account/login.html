@@ -1,0 +1,72 @@
+{% extends "account/base_entrance.html" %}
+{% load allauth i18n %}
+
+{% block head_title %}
+    {% trans "Connexion" %}
+{% endblock head_title %}
+
+{% block allauth_page %}
+    <div class="space-y-6">
+        <div class="space-y-2">
+            <h1 class="text-2xl sm:text-3xl font-display font-bold text-white">
+                {% trans "Connexion" %}
+            </h1>
+            <p class="text-white/50 text-sm">
+                {% trans "Pas encore inscrit ?" %}
+                <a href="{% url 'account_signup' %}" class="font-semibold text-emerald-300 hover:text-togo-yellow transition-colors">
+                    {% trans "Créer un compte" %}
+                </a>
+            </p>
+        </div>
+
+        {% if not SOCIALACCOUNT_ONLY %}
+            {% url 'account_login' as action_url %}
+            <form method="post" action="{{ action_url }}" class="space-y-4">
+                {% csrf_token %}
+
+                {% for field in form %}
+                    <div class="space-y-1.5">
+                        {% if field.field.widget.input_type == "hidden" %}
+                            {{ field }}
+                        {% else %}
+                            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-white/80">
+                                {{ field.label }}
+                            </label>
+                            <input type="{{ field.field.widget.input_type|default:'text' }}" name="{{ field.name }}" id="{{ field.id_for_label }}"
+                                   class="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/15 text-white placeholder-white/35 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-400/50 transition"
+                                   placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}"
+                                   {% if field.value %}value="{{ field.value }}"{% endif %}>
+                            {% if field.errors %}
+                                <p class="text-xs text-red-300">{{ field.errors.0 }}</p>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                {{ redirect_field }}
+
+                <button type="submit" class="w-full bg-gradient-to-r from-togo-green to-emerald-600 hover:from-emerald-600 hover:to-emerald-500 text-white font-bold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg shadow-emerald-900/40 hover:shadow-emerald-800/50 hover:-translate-y-0.5">
+                    {% trans "Se connecter" %}
+                </button>
+
+                <div class="text-center">
+                    <a href="{% url 'account_reset_password' %}" class="text-sm text-emerald-300/80 hover:text-togo-yellow transition-colors">
+                        {% trans "Mot de passe oublié ?" %}
+                    </a>
+                </div>
+            </form>
+        {% endif %}
+
+        {% if SOCIALACCOUNT_ENABLED %}
+            <div class="relative">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-white/15"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-3 bg-transparent text-white/40">{% trans "Ou" %}</span>
+                </div>
+            </div>
+            {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+        {% endif %}
+    </div>
+{% endblock allauth_page %}

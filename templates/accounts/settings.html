@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Paramètres" %} — PerteDocsTG{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <div class="card p-6 space-y-6">
+    <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+      <div>
+        <h1 class="text-2xl font-display font-bold text-gray-900 dark:text-white">{% trans "Paramètres du compte" %}</h1>
+        <p class="text-gray-500 dark:text-gray-400">{% trans "Gérez vos préférences et votre compte." %}</p>
+      </div>
+      <a href="{% url 'accounts:profile' %}" class="btn-secondary">{% trans "Retour au profil" %}</a>
+    </div>
+
+    <div class="rounded-3xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-sm">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white">{% trans "Préférences utilisateur" %}</h2>
+      <p class="mt-3 text-sm text-gray-600 dark:text-gray-300">{% trans "Ces préférences sont mises à jour automatiquement lorsque vous modifiez votre profil ou vos paramètres." %}</p>
+      <div class="mt-6 grid gap-4 sm:grid-cols-2">
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-800 p-4">
+          <h3 class="font-semibold text-gray-900 dark:text-white">{% trans "Mode sombree" %}</h3>
+          <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">{% trans "Basculer entre clair et sombre depuis le bouton de la barre de navigation." %}</p>
+        </div>
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-800 p-4">
+          <h3 class="font-semibold text-gray-900 dark:text-white">{% trans "Notifications" %}</h3>
+          <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">{% trans "Activez ou désactivez les notifications par e-mail et SMS dans votre profil." %}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="rounded-3xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-sm">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white">{% trans "Pages utiles" %}</h2>
+      <ul class="mt-4 space-y-2 text-sm text-gray-600 dark:text-gray-300">
+        <li><a href="{% url 'declarations:list' %}" class="text-togo-green hover:underline">{% trans "Voir mes déclarations" %}</a></li>
+        <li><a href="{% url 'declarations:wizard' %}" class="text-togo-green hover:underline">{% trans "Nouvelle déclaration" %}</a></li>
+        <li><a href="{% url 'core:faq' %}" class="text-togo-green hover:underline">{% trans "FAQ" %}</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

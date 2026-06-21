@@ -1,0 +1,97 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Votre document a été retrouvé !</title>
+  <style>
+    * { margin:0;padding:0;box-sizing:border-box; }
+    body { font-family:'Helvetica Neue',Arial,sans-serif; background:#F3F4F6; color:#111827; }
+    .wrapper { max-width:600px; margin:40px auto; background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 4px 24px rgba(0,0,0,0.08); }
+    .header { background:linear-gradient(135deg,#1D4ED8,#0EA5E9); padding:40px 32px; text-align:center; }
+    .flag { display:flex; justify-content:center; margin-bottom:16px; }
+    .f { height:6px; width:60px; }
+    .logo { color:#fff; font-size:26px; font-weight:900; letter-spacing:-0.5px; }
+    .badge { display:inline-block; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:#fff; font-size:12px; padding:6px 16px; border-radius:99px; margin-top:12px; font-weight:600; }
+    .body { padding:40px 32px; }
+    .alert-box { background:#EFF6FF; border:2px solid #93C5FD; border-radius:14px; padding:24px; text-align:center; margin-bottom:28px; }
+    .alert-emoji { font-size:48px; margin-bottom:12px; }
+    .alert-title { font-size:22px; font-weight:800; color:#1E40AF; margin-bottom:8px; }
+    .alert-sub { color:#3B82F6; font-size:14px; }
+    .info-table { width:100%; border-collapse:collapse; background:#F8FAFC; border-radius:10px; overflow:hidden; margin-bottom:24px; }
+    .info-table tr:not(:last-child) { border-bottom:1px solid #E2E8F0; }
+    .info-table td { padding:12px 16px; font-size:13px; }
+    .info-table td:first-child { color:#64748B; font-weight:600; width:45%; }
+    .info-table td:last-child { color:#0F172A; font-weight:700; }
+    .cta { display:block; text-align:center; background:linear-gradient(135deg,#006B3F,#047857); color:#fff; text-decoration:none; padding:18px 32px; border-radius:12px; font-weight:800; font-size:16px; margin:24px 0; }
+    .deadline { background:#FFFBEB; border:1px solid #FCD34D; border-radius:10px; padding:16px 20px; display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+    .deadline-icon { font-size:24px; flex-shrink:0; }
+    .footer { background:#F8FAFC; padding:24px 32px; text-align:center; font-size:12px; color:#94A3B8; line-height:1.7; }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <div class="flag">
+      <div class="f" style="background:#006B3F"></div>
+      <div class="f" style="background:#FFCE00;display:flex;align-items:center;justify-content:center">
+        <div style="width:14px;height:14px;border-radius:50%;background:#D21034"></div>
+      </div>
+      <div class="f" style="background:#006B3F"></div>
+    </div>
+    <div class="logo">PerteDocsTG</div>
+    <div class="badge">📍 Document Retrouvé</div>
+  </div>
+
+  <div class="body">
+    <div class="alert-box">
+      <div class="alert-emoji">🎉</div>
+      <div class="alert-title">Bonne nouvelle, {{ user_name }} !</div>
+      <div class="alert-sub">Votre document a été retrouvé et vous attend.</div>
+    </div>
+
+    <p style="font-size:15px;color:#374151;line-height:1.7;margin-bottom:20px;">
+      Nous avons le plaisir de vous informer que votre document que vous aviez déclaré perdu 
+      (déclaration n° <strong style="color:#006B3F;font-family:monospace">{{ declaration_number }}</strong>) 
+      a été retrouvé par les autorités compétentes.
+    </p>
+
+    {% if declaration %}
+    <table class="info-table">
+      <tr><td>Document</td><td>{{ declaration.document_type.name }}</td></tr>
+      <tr><td>N° Déclaration</td><td style="font-family:monospace">{{ declaration.declaration_number }}</td></tr>
+      {% if declaration.found_record %}
+      <tr><td>Trouvé par</td><td>{{ declaration.found_record.found_by }}</td></tr>
+      <tr><td>Lieu de récupération</td><td>{{ declaration.found_record.found_location }}</td></tr>
+      {% if declaration.found_record.collection_deadline %}
+      <tr><td>Date limite</td><td style="color:#DC2626">{{ declaration.found_record.collection_deadline|date:"d/m/Y" }}</td></tr>
+      {% endif %}
+      {% endif %}
+    </table>
+
+    {% if declaration.found_record.collection_deadline %}
+    <div class="deadline">
+      <div class="deadline-icon">⚠️</div>
+      <div>
+        <strong style="color:#92400E;font-size:13px;">Récupérez votre document avant le {{ declaration.found_record.collection_deadline|date:"d/m/Y" }}</strong>
+        <p style="color:#B45309;font-size:12px;margin-top:4px;">Passé ce délai, le document sera archivé comme non réclamé.</p>
+      </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    <p style="font-size:14px;color:#374151;margin-bottom:16px;">
+      Veuillez vous présenter avec une pièce d'identité valide au lieu indiqué ci-dessus 
+      pendant les heures d'ouverture pour récupérer votre document.
+    </p>
+
+    <div class="footer">
+      <p>PerteDocsTG — Service officiel de la République Togolaise<br>
+      Contact : <a href="mailto:support@pertedocs.tg" style="color:#006B3F">support@pertedocs.tg</a><br>
+      © {% now "Y" %} République Togolaise</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

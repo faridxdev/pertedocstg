@@ -1,20 +1,5 @@
 # PerteDocsTG — Installation sur Windows
 
-## Problèmes corrigés et solutions
-
----
-
-## ❌ Erreur `psycopg-binary==3.2.1` non trouvée
-
-**Cause** : la version `3.2.1` de `psycopg-binary` n'existe pas en binaire Windows (la première disponible est `3.2.2`).
-
-**Solution** : utiliser `requirements-dev-windows.txt` au lieu de `requirements.txt` :
-
-```powershell
-pip install -r requirements-dev-windows.txt
-```
-
----
 
 ## 🚀 Installation pas à pas (Windows)
 
@@ -225,4 +210,4 @@ python manage.py migrate
 
 ---
 
-*PerteDocsTG v1.0 — Support Windows*
+*PerteDocsTG v1.5 — Support Windows*
